@@ -29,7 +29,7 @@ const Home = () => {
       {/* City Carousel */}
       <div className="bg-slate-500 w-full pb-12">
         <div className="container mx-auto px-4 py-12">
-          <h2 className="text-3xl font-bold text-white mb-8 text-center">Popular Destinations</h2>
+          <h2 className="text-3xl font-bold text-white mb-8 text-center">Popular Mytineraries</h2>
           <CityCarousel />
         </div>
       </div>
