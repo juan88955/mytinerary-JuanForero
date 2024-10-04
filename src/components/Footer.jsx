@@ -2,12 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
 
-//componente de la pie de página
 const Footer = () => {
     return (
         <footer className="bg-black bg-opacity-90 text-gray-300 py-8">
             <div className="container mx-auto px-4">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Columna 1: Información del sitio */}
                     <div>
                         <h3 className="text-xl font-bold mb-4 text-white">My Tinerary</h3>
@@ -15,17 +14,13 @@ const Footer = () => {
                         <p>123 Travel Street, Adventure City, AC 12345</p>
                     </div>
 
-                    {/* Columna 2: Menú de navegación */}
+                    {/* Columna 2: Menú de navegación y Redes sociales */}
                     <div>
                         <h4 className="text-lg font-semibold mb-4 text-white">Quick Links</h4>
-                        <ul>
+                        <ul className="mb-6">
                             <li className="mb-2"><Link to="/" className="hover:text-white transition duration-300">Home</Link></li>
                             <li className="mb-2"><Link to="/cities" className="hover:text-white transition duration-300">Cities</Link></li>
                         </ul>
-                    </div>
-
-                    {/* Columna 3: Redes sociales */}
-                    <div>
                         <h4 className="text-lg font-semibold mb-4 text-white">Follow Us</h4>
                         <div className="flex space-x-4">
                             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition duration-300"><FaFacebook size={24} /></a>
@@ -35,22 +30,12 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    {/* Columna 4: Suscripción al boletín */}
+                    {/* Columna 3: Información adicional */}
                     <div>
-                        <h4 className="text-lg font-semibold mb-4 text-white">Subscribe to Our Newsletter</h4>
-                        <form className="flex flex-col space-y-2">
-                            <input
-                                type="email"
-                                placeholder="Enter your email"
-                                className="px-4 py-2 bg-gray-800 rounded text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300"
-                            />
-                            <button
-                                type="submit"
-                                className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded transition duration-300"
-                            >
-                                Subscribe
-                            </button>
-                        </form>
+                        <h4 className="text-lg font-semibold mb-4 text-white">About Us</h4>
+                        <p className="mb-2">MyTinerary is your go-to platform for discovering unique travel experiences curated by local experts.</p>
+                        <p className="mb-2">We're passionate about helping you explore the world and create unforgettable memories.</p>
+                        <p>Join our community of travelers today!</p>
                     </div>
                 </div>
 
