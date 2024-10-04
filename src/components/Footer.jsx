@@ -2,10 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
 
+// Definición del componente Footer
 const Footer = () => {
     return (
+        // Contenedor principal del footer
         <footer className="bg-black bg-opacity-90 text-gray-300 py-8">
             <div className="container mx-auto px-4">
+                {/* Grid para el contenido principal del footer */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {/* Columna 1: Información del sitio */}
                     <div>
@@ -22,6 +25,7 @@ const Footer = () => {
                             <li className="mb-2"><Link to="/cities" className="hover:text-white transition duration-300">Cities</Link></li>
                         </ul>
                         <h4 className="text-lg font-semibold mb-4 text-white">Follow Us</h4>
+                        {/* Iconos de redes sociales */}
                         <div className="flex space-x-4">
                             <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition duration-300"><FaFacebook size={24} /></a>
                             <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition duration-300"><FaTwitter size={24} /></a>
@@ -39,9 +43,9 @@ const Footer = () => {
                     </div>
                 </div>
 
-                {/* Derechos de autor */}
+                {/* Sección de derechos de autor */}
                 <div className="mt-8 pt-8 border-t border-gray-600 text-center">
-                    <p className="text-white font-semibold">&copy; {new Date().getFullYear()} MyTinerary. All rights reserved. Developer: Juan Forero CH5</p>
+                    <p className="text-white font-semibold">&copy; {new Date().getFullYear()} MyTinerary. All rights reserved. Developer Juan Forero CH5</p>
                 </div>
             </div>
         </footer>

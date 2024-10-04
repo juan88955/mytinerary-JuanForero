@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaBars, FaTimes, FaUser, FaHome, FaCity } from 'react-icons/fa';
 
+// Definición del componente funcional Header
 const Header = () => {
   // Estado para controlar la apertura/cierre del menú móvil
   const [isMenuOpen, setIsMenuOpen] = useState(false);

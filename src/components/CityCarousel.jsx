@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
+// Array de objetos que contiene información sobre las ciudades
 const cities = [
     { name: 'Tokyo', image: 'https://i.pinimg.com/736x/79/57/b4/7957b4e964a06e197f6827022130e348.jpg' },
     { name: 'Dubai', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTv-gk_MCdfMM3WrtCQOFBfV4C7tXvCKcPW5g&s' },
@@ -15,14 +16,19 @@ const cities = [
     { name: 'Oporto', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjmuFV-SdUwtTyoWiZ_7bpvXkc2clu-lvPbw&s' },
 ];
 
+// Componente principal CityCarousel
 const CityCarousel = () => {
+    // Estado para controlar la diapositiva actual
     const [currentSlide, setCurrentSlide] = useState(0);
+    // Estado para almacenar las ciudades con sus "me gusta" generados
     const [citiesWithLikes, setCitiesWithLikes] = useState([]);
 
+    // Función para generar un número aleatorio de "me gusta"
     const generateLikes = useCallback(() => {
         return Math.floor(Math.random() * (2000 - 500 + 1)) + 500;
     }, []);
 
+    // Función para actualizar los "me gusta" de todas las ciudades
     const updateLikes = useCallback(() => {
         setCitiesWithLikes(cities.map(city => ({
             ...city,
@@ -30,6 +36,7 @@ const CityCarousel = () => {
         })));
     }, [generateLikes]);
 
+    // Efecto para inicializar y actualizar periódicamente el carrusel
     useEffect(() => {
         updateLikes();
         const timer = setInterval(() => {
@@ -40,28 +47,35 @@ const CityCarousel = () => {
         return () => clearInterval(timer);
     }, [updateLikes]);
 
+    // Función para avanzar a la siguiente diapositiva
     const nextSlide = () => {
         setCurrentSlide(prevSlide => (prevSlide + 1) % Math.ceil(cities.length / 4));
         updateLikes();
     };
 
+    // Función para retroceder a la diapositiva anterior
     const prevSlide = () => {
         setCurrentSlide(prevSlide => (prevSlide - 1 + Math.ceil(cities.length / 4)) % Math.ceil(cities.length / 4));
         updateLikes();
     };
 
+    // Agrupar las ciudades en grupos de 4
     const cityGroups = [];
     for (let i = 0; i < citiesWithLikes.length; i += 4) {
         cityGroups.push(citiesWithLikes.slice(i, i + 4));
     }
 
+    // Renderizado del componente
     return (
         <div className="my-12 max-w-4xl mx-auto">
+            {/* Contenedor principal del carrusel */}
             <div className="relative overflow-hidden">
+                {/* Contenedor de las diapositivas */}
                 <div
                     className="flex transition-transform duration-500 ease-in-out"
                     style={{ transform: `translateX(-${currentSlide * 100}%)` }}
                 >
+                    {/* Mapeo de los grupos de ciudades */}
                     {cityGroups.map((group, index) => (
                         <div key={index} className="w-full flex-shrink-0 px-4">
                             <div className="grid grid-cols-2 gap-4">
@@ -87,6 +101,7 @@ const CityCarousel = () => {
                         </div>
                     ))}
                 </div>
+                {/* Botones de navegación */}
                 <button
                     onClick={prevSlide}
                     className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-all duration-300"
@@ -100,6 +115,7 @@ const CityCarousel = () => {
                     &#10095;
                 </button>
             </div>
+            {/* Indicadores de diapositiva */}
             <div className="flex justify-center mt-4">
                 {cityGroups.map((_, dot) => (
                     <button
