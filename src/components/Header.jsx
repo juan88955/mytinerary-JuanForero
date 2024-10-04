@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBars, FaTimes, FaUser, FaHome, FaCity, FaInfoCircle, FaEnvelope } from 'react-icons/fa';
 
+//componente del header
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
@@ -41,12 +42,13 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  //componente del header
   return (
     <header className={`bg-black bg-opacity-90 text-white transition-all duration-300 z-50 ${isSticky ? 'fixed top-0 left-0 right-0 shadow-md' : 'relative'}`}>
       <div className="container mx-auto flex justify-between items-center p-4">
         <Link to="/" className="flex items-center">
           <span className="text-3xl font-bold mr-2">🌍</span>
-          <span className="text-2xl font-extrabold tracking-tight">MyTinerary</span>
+          <span className="text-2xl font-extrabold tracking-tight">My Tinerary</span>
         </Link>
         <div className="flex items-center">
           <FaUser className="text-2xl mr-4" />

@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Cities from './pages/Cities';
 
+//componente principal
 function App() {
   return (
     <Router>

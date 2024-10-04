@@ -11,7 +11,7 @@ const Home = () => {
       <div className="bg-black bg-opacity-60 text-white py-20 md:py-32 lg:py-40 px-4 bg-cover bg-center bg-no-repeat hero-background">
         <div className="container mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 animate-fade-in-down">
-            Welcome to MyTinerary
+            Welcome to My Tinerary
           </h1>
           <p className="text-lg md:text-xl lg:text-2xl mb-6 md:mb-8 lg:mb-10 animate-fade-in-up">
             Find your perfect trip, designed by insiders who know and love their cities!

@@ -1,5 +1,6 @@
 import React from 'react';
 
+//componente de la pagina de ciudades
 const Cities = () => {
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center">

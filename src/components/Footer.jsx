@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
 
+//componente de la pie de página
 const Footer = () => {
     return (
         <footer className="bg-black bg-opacity-90 text-gray-300 py-8">
@@ -9,7 +10,7 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     {/* Columna 1: Información del sitio */}
                     <div>
-                        <h3 className="text-xl font-bold mb-4 text-white">MyTinerary</h3>
+                        <h3 className="text-xl font-bold mb-4 text-white">My Tinerary</h3>
                         <p className="mb-2">Find your perfect trip, designed by insiders who know and love their cities!</p>
                         <p>123 Travel Street, Adventure City, AC 12345</p>
                     </div>
@@ -20,8 +21,6 @@ const Footer = () => {
                         <ul>
                             <li className="mb-2"><Link to="/" className="hover:text-white transition duration-300">Home</Link></li>
                             <li className="mb-2"><Link to="/cities" className="hover:text-white transition duration-300">Cities</Link></li>
-                            <li className="mb-2"><Link to="/about" className="hover:text-white transition duration-300">About Us</Link></li>
-                            <li className="mb-2"><Link to="/contact" className="hover:text-white transition duration-300">Contact</Link></li>
                         </ul>
                     </div>
 
@@ -56,8 +55,8 @@ const Footer = () => {
                 </div>
 
                 {/* Derechos de autor */}
-                <div className="mt-8 pt-8 border-t border-gray-800 text-center">
-                    <p>&copy; {new Date().getFullYear()} MyTinerary. All rights reserved. Developer-Juan Forero CH5</p>
+                <div className="mt-8 pt-8 border-t border-gray-600 text-center">
+                    <p className="text-white font-semibold">&copy; {new Date().getFullYear()} MyTinerary. All rights reserved. Developer: Juan Forero CH5</p>
                 </div>
             </div>
         </footer>
