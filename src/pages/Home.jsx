@@ -1,12 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; //componente de enlace 
-import { FaCompass } from 'react-icons/fa'; //icono de la ruta de navegación
-import CityCarousel from '../components/CityCarousel'; //componente deL carrusel de ciudades
+import { Link } from 'react-router-dom';
+import { FaCompass } from 'react-icons/fa';
+import CityCarousel from '../components/CityCarousel';
 
-//componente de la pagina de inicio
+//home pagina del sitio
 const Home = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       {/* Hero section */}
       <div className="bg-black bg-opacity-60 text-white py-20 md:py-32 lg:py-40 px-4 bg-cover bg-center bg-no-repeat hero-background">
         <div className="container mx-auto text-center">
@@ -27,7 +27,7 @@ const Home = () => {
       </div>
 
       {/* City Carousel */}
-      <div className="bg-slate-500 w-full pb-12">
+      <div className="bg-slate-500 flex-grow">
         <div className="container mx-auto px-4 py-12">
           <h2 className="text-3xl font-bold text-white mb-8 text-center">Popular Mytineraries</h2>
           <CityCarousel />
