@@ -1,11 +1,11 @@
 import React from 'react';
 
-//componente de la pagina de ciudades
+// Componente de la página de ciudades
 const Cities = () => {
     return (
-        <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center">
-            <h1 className="text-4xl font-bold text-black mb-4">Cities</h1>
-            <p className="text-xl text-gray-700">Here will be the Cities search. Under construction 🚧</p>
+        <div className="min-h-screen bg-black bg-opacity-80 flex flex-col justify-center items-center">
+            <h1 className="text-4xl font-bold text-white mb-4">Cities</h1>
+            <p className="text-xl text-gray-300">Here will be the Cities search. Under construction 🚧</p>
         </div>
     );
 };
