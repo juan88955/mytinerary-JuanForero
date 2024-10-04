@@ -2,22 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Animación de fade-in-down */
 @keyframes fade-in-down {
   0% {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
+/* Animación de fade-in-down */
 @keyframes fade-in-up {
   0% {
     opacity: 0;
     transform: translateY(20px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -32,11 +36,15 @@
   animation: fade-in-up 1s ease-out;
 }
 
+/* Animación de pulso */
 @keyframes pulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
+
   50% {
     opacity: 0.9;
     transform: scale(1.05);
@@ -45,4 +53,34 @@
 
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Pantalla hero */
+@keyframes slowPan {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Animación de slowPan */
+.hero-background {
+  background-image: url('https://images.unsplash.com/photo-1530789253388-582c481c54b0?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8M3x8fGVufDB8fHx8fA%3D%3D');
+  background-blend-mode: overlay;
+  background-size: 150% auto;
+  background-position: center;
+  animation: slowPan 30s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+  .hero-background {
+    background-size: 200% auto;
+  }
 }
