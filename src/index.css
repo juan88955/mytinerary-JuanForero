@@ -38,6 +38,7 @@
 
 /* Animación de pulso */
 @keyframes pulse {
+
   0%,
   100% {
     opacity: 1;
@@ -60,10 +61,12 @@
     background-size: 100% auto;
     background-position: 50% 50%;
   }
+
   50% {
     background-size: 115% auto;
     background-position: 52% 52%;
   }
+
   100% {
     background-size: 100% auto;
     background-position: 50% 50%;
