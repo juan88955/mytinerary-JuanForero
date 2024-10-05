@@ -38,7 +38,6 @@
 
 /* Animación de pulso */
 @keyframes pulse {
-
   0%,
   100% {
     opacity: 1;
@@ -58,18 +57,16 @@
 /* Animación de zoomPan más rápida */
 @keyframes zoomPan {
   0% {
-    background-size: 100% auto;
-    background-position: 50% 50%;
+    background-size: 150% auto;
+    background-position: 0% 50%;
   }
-
   50% {
-    background-size: 115% auto;
-    background-position: 52% 52%;
+    background-size: 165% auto;
+    background-position: 100% 50%;
   }
-
   100% {
-    background-size: 100% auto;
-    background-position: 50% 50%;
+    background-size: 150% auto;
+    background-position: 0% 50%;
   }
 }
 
@@ -77,13 +74,28 @@
 .hero-background {
   background-image: url('https://images.unsplash.com/photo-1530789253388-582c481c54b0?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8M3x8fGVufDB8fHx8fA%3D%3D');
   background-blend-mode: overlay;
-  background-size: 100% auto;
+  background-size: 150% auto;
   background-position: center;
   animation: zoomPan 15s ease-in-out infinite;
 }
 
 @media (max-width: 768px) {
   .hero-background {
-    background-size: 150% auto;
+    background-size: 200% auto;
+  }
+  
+  @keyframes zoomPan {
+    0% {
+      background-size: 200% auto;
+      background-position: 0% 50%;
+    }
+    50% {
+      background-size: 220% auto;
+      background-position: 100% 50%;
+    }
+    100% {
+      background-size: 200% auto;
+      background-position: 0% 50%;
+    }
   }
 }
