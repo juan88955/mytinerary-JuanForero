@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaBars, FaTimes, FaUser, FaHome, FaCity } from 'react-icons/fa';
+import logo from '/logo.png';
 
 // Definición del componente funcional Header
 const Header = () => {
-  // Estado para controlar la apertura/cierre del menú móvil
+  // Estados para controlar el menú móvil y el comportamiento sticky
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  // Estado para controlar si el header debe ser sticky
   const [isSticky, setIsSticky] = useState(false);
-  // Hooks de react-router-dom para navegación y obtención de la ubicación actual
+
+  // Hooks de react-router-dom para navegación y ubicación
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Efecto para cerrar el menú si la pantalla se hace más grande
+  // Efecto para cerrar el menú móvil en pantallas grandes
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768 && isMenuOpen) {
@@ -24,7 +25,7 @@ const Header = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [isMenuOpen]);
 
-  // Efecto para prevenir el scroll del body cuando el menú está abierto
+  // Efecto para prevenir el scroll cuando el menú móvil está abierto
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -36,18 +37,14 @@ const Header = () => {
   // Efecto para manejar el comportamiento sticky del header
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 0) {
-        setIsSticky(true);
-      } else {
-        setIsSticky(false);
-      }
+      setIsSticky(window.scrollY > 0);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Función para desplazar la página hacia arriba y navegar a la página principal si es necesario
+  // Función para desplazar al inicio de la página y navegar a la página principal
   const scrollToTop = () => {
     if (location.pathname !== '/') {
       navigate('/');
@@ -64,7 +61,7 @@ const Header = () => {
       <div className="container mx-auto flex justify-between items-center p-4">
         {/* Logo y nombre de la aplicación */}
         <button onClick={scrollToTop} className="flex items-center bg-transparent border-none cursor-pointer">
-          <span className="text-3xl font-bold mr-2">🌍</span>
+          <img src={logo} alt="My Tinerary Logo" className="h-8 mr-2" />
           <span className="text-2xl font-extrabold tracking-tight">My Tinerary</span>
         </button>
         {/* Iconos de usuario y menú */}
