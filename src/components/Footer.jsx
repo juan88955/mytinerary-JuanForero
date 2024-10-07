@@ -14,7 +14,7 @@ const Footer = () => {
                     <div>
                         <h3 className="text-xl font-bold mb-4 text-white">My Tinerary</h3>
                         <p className="mb-2">Find your perfect trip, designed by insiders who know and love their cities!</p>
-                        <p>123 Travel Street, Adventure City, AC 12345</p>
+                        <p>543 Main Street, Anytown, USA 71269</p>
                     </div>
 
                     {/* Columna 2: Menú de navegación y Redes sociales */}
