@@ -7,16 +7,16 @@ import { cities } from '../components/cityData';
 // Componente funcional Home
 const Home = () => {
   return (
-    // Contenedor principal con altura mínima de pantalla completa
+    // Contenedor principal con altura mínima de pantalla completa y disposición en columna
     <div className="min-h-screen flex flex-col">
-      {/* Sección Hero con fondo oscuro semitransparente */}
-      <div className="bg-black bg-opacity-60 text-white py-20 md:py-32 lg:py-40 px-4 bg-cover bg-center bg-no-repeat hero-background">
+      {/* Sección Hero con fondo animado y contenido centrado */}
+      <div className="hero-background bg-black bg-opacity-60 text-white py-20 md:py-32 lg:py-40 px-4 bg-cover bg-center bg-no-repeat animate-zoom-pan bg-[length:150%_auto]">
         <div className="container mx-auto text-center">
-          {/* Título principal con animación */}
+          {/* Título principal con animación de entrada desde arriba */}
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 animate-fade-in-down">
             Welcome to My Tinerary
           </h1>
-          {/* Subtítulo con animación */}
+          {/* Subtítulo con animación de entrada desde abajo */}
           <p className="text-lg md:text-xl lg:text-2xl mb-6 md:mb-8 lg:mb-10 animate-fade-in-up">
             Find your perfect trip, designed by insiders who know and love their cities!
           </p>
