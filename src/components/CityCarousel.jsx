@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
-// Componente funcional CityCarousel
+// Componente funcional CityCarousel que recibe un array de ciudades como prop
 const CityCarousel = ({ cities }) => {
-    // Estado para el slide actual y las ciudades con likes
+    // Estado para controlar el slide actual
     const [currentSlide, setCurrentSlide] = useState(0);
+    // Estado para almacenar las ciudades con likes generados aleatoriamente
     const [citiesWithLikes, setCitiesWithLikes] = useState([]);
 
-    // Función para generar un número aleatorio de likes
+    // Función memoizada para generar un número aleatorio de likes
     const generateLikes = useCallback(() => {
         return Math.floor(Math.random() * (2000 - 500 + 1)) + 500;
     }, []);
 
-    // Función para actualizar los likes de las ciudades
+    // Función memoizada para actualizar los likes de las ciudades
     const updateLikes = useCallback(() => {
         setCitiesWithLikes(cities.map(city => ({
             ...city,
@@ -19,7 +20,7 @@ const CityCarousel = ({ cities }) => {
         })));
     }, [generateLikes, cities]);
 
-    // Efecto para inicializar y actualizar el carrusel
+    // Efecto para inicializar y actualizar el carrusel cada 5 segundos
     useEffect(() => {
         updateLikes();
         const timer = setInterval(() => {
@@ -27,15 +28,17 @@ const CityCarousel = ({ cities }) => {
             updateLikes();
         }, 5000);
 
+        // Limpieza del intervalo al desmontar el componente
         return () => clearInterval(timer);
     }, [updateLikes, cities.length]);
 
-    // Funciones para navegar entre slides
+    // Función para avanzar al siguiente slide
     const nextSlide = () => {
         setCurrentSlide(prevSlide => (prevSlide + 1) % Math.ceil(cities.length / 4));
         updateLikes();
     };
 
+    // Función para retroceder al slide anterior
     const prevSlide = () => {
         setCurrentSlide(prevSlide => (prevSlide - 1 + Math.ceil(cities.length / 4)) % Math.ceil(cities.length / 4));
         updateLikes();
@@ -48,7 +51,7 @@ const CityCarousel = ({ cities }) => {
     }
 
     return (
-        <div className="my-12 max-w-4xl mx-auto">
+        <div className="my-12 max-w-6xl mx-auto">
             <div className="relative overflow-hidden">
                 {/* Contenedor principal del carrusel */}
                 <div
@@ -57,14 +60,15 @@ const CityCarousel = ({ cities }) => {
                 >
                     {cityGroups.map((group, index) => (
                         <div key={index} className="w-full flex-shrink-0 px-4">
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-2 gap-6">
                                 {group.map((city, cityIndex) => (
-                                    // Tarjeta de ciudad individual
+                                    // Tarjeta individual de ciudad
                                     <div key={cityIndex} className="relative rounded-lg overflow-hidden group">
+                                        {/* Imagen de la ciudad */}
                                         <img
                                             src={city.image}
                                             alt={city.name}
-                                            className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+                                            className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
                                         />
                                         {/* Nombre de la ciudad */}
                                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent text-white p-2">
@@ -83,13 +87,14 @@ const CityCarousel = ({ cities }) => {
                         </div>
                     ))}
                 </div>
-                {/* Botones de navegación */}
+                {/* Botón para slide anterior */}
                 <button
                     onClick={prevSlide}
                     className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-all duration-300"
                 >
                     &#10094;
                 </button>
+                {/* Botón para siguiente slide */}
                 <button
                     onClick={nextSlide}
                     className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white bg-opacity-50 rounded-full p-2 hover:bg-opacity-75 transition-all duration-300"
