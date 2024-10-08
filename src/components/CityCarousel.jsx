@@ -59,7 +59,7 @@ const CityCarousel = ({ cities }) => {
                     style={{ transform: `translateX(-${currentSlide * 100}%)` }}
                 >
                     {cityGroups.map((group, index) => (
-                        <div key={index} className="w-full flex-shrink-0 px-4">
+                        <div key={index} className="w-full flex-shrink-0 px-8">
                             <div className="grid grid-cols-2 gap-6">
                                 {group.map((city, cityIndex) => (
                                     // Tarjeta individual de ciudad
