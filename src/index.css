@@ -13,3 +13,27 @@
     background-size: 200% auto;
   }
 }
+
+
+/* Estilos específicos para el componente Cities */
+
+.hero-background-cities {
+  background-image: url('https://i.pinimg.com/originals/38/10/b3/3810b3d0436dfa7b7c5bdd336fc8834c.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.hero-background-cities::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}

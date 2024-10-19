@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import Cities from './pages/Cities';
+import CityDetail from './pages/CityDetail';
 
 //componente principal
 function App() {
@@ -15,6 +16,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/cities" element={<Cities />} />
+            <Route path="/city/:cityName" element={<CityDetail />} />
           </Routes>
         </main>
         <Footer />

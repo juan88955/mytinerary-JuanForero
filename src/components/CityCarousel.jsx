@@ -1,18 +1,21 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 
-// Componente funcional CityCarousel que recibe un array de ciudades como prop
+
+//Renderiza un carrusel de ciudades con funcionalidad de likes y navegación
 const CityCarousel = ({ cities }) => {
     // Estado para controlar el slide actual
     const [currentSlide, setCurrentSlide] = useState(0);
     // Estado para almacenar las ciudades con likes generados aleatoriamente
     const [citiesWithLikes, setCitiesWithLikes] = useState([]);
 
-    // Función memoizada para generar un número aleatorio de likes
+    //Genera un número aleatorio de likes entre 500 y 2000
     const generateLikes = useCallback(() => {
         return Math.floor(Math.random() * (2000 - 500 + 1)) + 500;
     }, []);
 
-    // Función memoizada para actualizar los likes de las ciudades
+
+    //Actualiza los likes de las ciudades
     const updateLikes = useCallback(() => {
         setCitiesWithLikes(cities.map(city => ({
             ...city,
@@ -32,13 +35,14 @@ const CityCarousel = ({ cities }) => {
         return () => clearInterval(timer);
     }, [updateLikes, cities.length]);
 
-    // Función para avanzar al siguiente slide
+
+    // Avanza al siguiente slide
     const nextSlide = () => {
         setCurrentSlide(prevSlide => (prevSlide + 1) % Math.ceil(cities.length / 4));
         updateLikes();
     };
 
-    // Función para retroceder al slide anterior
+    // Retrocede al slide anterior
     const prevSlide = () => {
         setCurrentSlide(prevSlide => (prevSlide - 1 + Math.ceil(cities.length / 4)) % Math.ceil(cities.length / 4));
         updateLikes();
@@ -63,25 +67,27 @@ const CityCarousel = ({ cities }) => {
                             <div className="grid grid-cols-2 gap-6">
                                 {group.map((city, cityIndex) => (
                                     // Tarjeta individual de ciudad
-                                    <div key={cityIndex} className="relative rounded-lg overflow-hidden group">
-                                        {/* Imagen de la ciudad */}
-                                        <img
-                                            src={city.image}
-                                            alt={city.name}
-                                            className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
-                                        />
-                                        {/* Nombre de la ciudad */}
-                                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent text-white p-2">
-                                            <h3 className="text-lg font-semibold">{city.name}</h3>
+                                    <Link to={`/city/${city.name.toLowerCase()}`} key={cityIndex} className="block">
+                                        <div className="relative rounded-lg overflow-hidden group">
+                                            {/* Imagen de la ciudad */}
+                                            <img
+                                                src={city.image}
+                                                alt={city.name}
+                                                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+                                            />
+                                            {/* Nombre de la ciudad */}
+                                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent text-white p-2">
+                                                <h3 className="text-lg font-semibold">{city.name}</h3>
+                                            </div>
+                                            {/* Contador de likes */}
+                                            <div className="absolute top-2 right-2 bg-white bg-opacity-50 rounded-full p-1 flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-black" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                                                </svg>
+                                                <span className="ml-1 text-xs font-bold">{city.likes}</span>
+                                            </div>
                                         </div>
-                                        {/* Contador de likes */}
-                                        <div className="absolute top-2 right-2 bg-white bg-opacity-50 rounded-full p-1 flex items-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-black" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-                                            </svg>
-                                            <span className="ml-1 text-xs font-bold">{city.likes}</span>
-                                        </div>
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         </div>
