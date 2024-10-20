@@ -1,26 +1,25 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Header from './components/Header';
-import Footer from './components/Footer';
 import Home from './pages/Home';
 import Cities from './pages/Cities';
 import CityDetail from './pages/CityDetail';
 
-//componente principal
+// Definición del componente principal App
 function App() {
   return (
+    // Router envuelve toda la aplicación para habilitar el enrutamiento
     <Router>
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/cities" element={<Cities />} />
-            <Route path="/city/:cityName" element={<CityDetail />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
+      {/* Routes define las rutas disponibles en la aplicación */}
+      <Routes>
+        {/* Ruta para la página de inicio */}
+        <Route path="/" element={<Home />} />
+
+        {/* Ruta para la página de listado de ciudades */}
+        <Route path="/cities" element={<Cities />} />
+
+        {/* Ruta dinámica para los detalles de una ciudad específica */}
+        <Route path="/city/:cityName" element={<CityDetail />} />
+      </Routes>
     </Router>
   );
 }

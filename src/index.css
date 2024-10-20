@@ -16,7 +16,6 @@
 
 
 /* Estilos específicos para el componente Cities */
-
 .hero-background-cities {
   background-image: url('https://i.pinimg.com/originals/38/10/b3/3810b3d0436dfa7b7c5bdd336fc8834c.jpg');
   background-size: cover;
@@ -28,6 +27,7 @@
   position: relative;
 }
 
+/* Estilos específicos para el componente CityCarousel */
 .hero-background-cities::before {
   content: "";
   position: absolute;

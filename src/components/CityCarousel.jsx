@@ -1,51 +1,37 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-
 
 //Renderiza un carrusel de ciudades con funcionalidad de likes y navegación
 const CityCarousel = ({ cities }) => {
     // Estado para controlar el slide actual
     const [currentSlide, setCurrentSlide] = useState(0);
-    // Estado para almacenar las ciudades con likes generados aleatoriamente
-    const [citiesWithLikes, setCitiesWithLikes] = useState([]);
 
-    //Genera un número aleatorio de likes entre 500 y 2000
-    const generateLikes = useCallback(() => {
-        return Math.floor(Math.random() * (2000 - 500 + 1)) + 500;
-    }, []);
-
-
-    //Actualiza los likes de las ciudades
-    const updateLikes = useCallback(() => {
-        setCitiesWithLikes(cities.map(city => ({
+    // Limitar el número de ciudades a 12 y generar likes estáticos
+    const citiesWithLikes = useMemo(() => {
+        return cities.slice(0, 12).map(city => ({
             ...city,
-            likes: generateLikes()
-        })));
-    }, [generateLikes, cities]);
+            likes: Math.floor(Math.random() * (2000 - 500 + 1)) + 500
+        }));
+    }, [cities]);
 
-    // Efecto para inicializar y actualizar el carrusel cada 5 segundos
+    // Efecto para actualizar el carrusel cada 5 segundos
     useEffect(() => {
-        updateLikes();
         const timer = setInterval(() => {
-            setCurrentSlide(prevSlide => (prevSlide + 1) % Math.ceil(cities.length / 4));
-            updateLikes();
+            setCurrentSlide(prevSlide => (prevSlide + 1) % Math.ceil(citiesWithLikes.length / 4));
         }, 5000);
 
         // Limpieza del intervalo al desmontar el componente
         return () => clearInterval(timer);
-    }, [updateLikes, cities.length]);
-
+    }, [citiesWithLikes.length]);
 
     // Avanza al siguiente slide
     const nextSlide = () => {
-        setCurrentSlide(prevSlide => (prevSlide + 1) % Math.ceil(cities.length / 4));
-        updateLikes();
+        setCurrentSlide(prevSlide => (prevSlide + 1) % Math.ceil(citiesWithLikes.length / 4));
     };
 
     // Retrocede al slide anterior
     const prevSlide = () => {
-        setCurrentSlide(prevSlide => (prevSlide - 1 + Math.ceil(cities.length / 4)) % Math.ceil(cities.length / 4));
-        updateLikes();
+        setCurrentSlide(prevSlide => (prevSlide - 1 + Math.ceil(citiesWithLikes.length / 4)) % Math.ceil(citiesWithLikes.length / 4));
     };
 
     // Agrupar las ciudades en grupos de 4
@@ -114,10 +100,7 @@ const CityCarousel = ({ cities }) => {
                     <button
                         key={dot}
                         className={`mx-2 w-2 h-2 rounded-full transition-all duration-300 ${currentSlide === dot ? 'bg-black w-4' : 'bg-gray-300'}`}
-                        onClick={() => {
-                            setCurrentSlide(dot);
-                            updateLikes();
-                        }}
+                        onClick={() => setCurrentSlide(dot)}
                     />
                 ))}
             </div>

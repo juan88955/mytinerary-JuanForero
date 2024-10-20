@@ -1,7 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { cities } from '../components/cityData.js';
+import MainLayout from '../layouts/MainLayout';
 
+// Componente SearchBar: Barra de búsqueda con estilo personalizado
 const SearchBar = ({ value, onChange }) => (
     <div className="flex items-center bg-gray-700 rounded-full p-2 max-w-md mx-auto">
         <div className="text-blue-400 mr-2">
@@ -31,6 +33,7 @@ const SearchBar = ({ value, onChange }) => (
     </div>
 );
 
+// Componente CityCard: Tarjeta para mostrar información de una ciudad
 const CityCard = ({ city }) => (
     <div className="relative w-96 h-64 rounded-lg overflow-hidden shadow-lg">
         <img
@@ -57,16 +60,20 @@ const CityCard = ({ city }) => (
     </div>
 );
 
+// Componente principal Cities
 const Cities = () => {
+    // Estado para el texto de filtrado y la visibilidad del botón de scroll
     const [filterText, setFilterText] = useState('');
     const [showScrollTop, setShowScrollTop] = useState(false);
 
+    // Filtrado de ciudades basado en el texto de búsqueda
     const filteredCities = useMemo(() => {
         return cities.filter(city =>
             city.name.toLowerCase().startsWith(filterText.toLowerCase())
         );
     }, [filterText]);
 
+    // Efecto para mostrar/ocultar el botón de scroll hacia arriba
     useEffect(() => {
         const toggleVisibility = () => {
             if (window.pageYOffset > 300) {
@@ -81,6 +88,7 @@ const Cities = () => {
         return () => window.removeEventListener('scroll', toggleVisibility);
     }, []);
 
+    // Función para scroll suave hacia arriba
     const scrollToTop = () => {
         window.scrollTo({
             top: 0,
@@ -89,51 +97,57 @@ const Cities = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-500 relative">
-            <div className="hero-background-cities flex flex-col justify-center items-center">
-                <div className="text-center z-10 relative px-4">
-                    <h1 className="text-5xl font-bold text-white mb-4">
-                        Cities of the World
-                    </h1>
-                    <p className="text-xl text-gray-200 max-w-2xl mx-auto">
-                        Explore iconic destinations and hidden gems across the globe. Discover the unique charm and culture of cities that shape our world.
-                    </p>
+        <MainLayout>
+            <div className="min-h-screen bg-slate-500 relative">
+                {/* Sección hero con título y descripción */}
+                <div className="hero-background-cities flex flex-col justify-center items-center">
+                    <div className="text-center z-10 relative px-4">
+                        <h1 className="text-5xl font-bold text-white mb-4">
+                            Cities of the World
+                        </h1>
+                        <p className="text-xl text-gray-200 max-w-2xl mx-auto">
+                            Explore iconic destinations and hidden gems across the globe. Discover the unique charm and culture of cities that shape our world.
+                        </p>
+                    </div>
                 </div>
-            </div>
 
-            <div className="bg-slate-500 py-6">
-                <SearchBar
-                    value={filterText}
-                    onChange={(e) => setFilterText(e.target.value)}
-                />
-            </div>
+                {/* Barra de búsqueda */}
+                <div className="bg-slate-500 py-6">
+                    <SearchBar
+                        value={filterText}
+                        onChange={(e) => setFilterText(e.target.value)}
+                    />
+                </div>
 
-            <div className="p-8">
-                {filteredCities.length > 0 ? (
-                    <div className="flex flex-wrap justify-center gap-6">
-                        {filteredCities.map((city, index) => (
-                            <CityCard key={index} city={city} />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center text-white text-2xl mt-8">
-                        No cities found matching your search. Try a different filter!
-                    </div>
+                {/* Lista de ciudades filtradas */}
+                <div className="p-8">
+                    {filteredCities.length > 0 ? (
+                        <div className="flex flex-wrap justify-center gap-6">
+                            {filteredCities.map((city, index) => (
+                                <CityCard key={index} city={city} />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center text-white text-2xl mt-8">
+                            No cities found matching your search. Try a different filter!
+                        </div>
+                    )}
+                </div>
+
+                {/* Botón de scroll hacia arriba */}
+                {showScrollTop && (
+                    <button
+                        onClick={scrollToTop}
+                        className="fixed bottom-8 right-8 bg-gray-700 text-white p-2 rounded-full shadow-lg hover:bg-gray-800 transition-colors duration-300"
+                        aria-label="Scroll to top"
+                    >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                        </svg>
+                    </button>
                 )}
             </div>
-
-            {showScrollTop && (
-                <button
-                    onClick={scrollToTop}
-                    className="fixed bottom-8 right-8 bg-gray-700 text-white p-2 rounded-full shadow-lg hover:bg-gray-800 transition-colors duration-300"
-                    aria-label="Scroll to top"
-                >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                    </svg>
-                </button>
-            )}
-        </div>
+        </MainLayout>
     );
 };
 
