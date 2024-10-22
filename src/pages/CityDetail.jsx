@@ -1,31 +1,28 @@
+// Importamos las dependencias necesarias
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
+import { getCityById } from '../api/citiesApi';
 
+// Componente principal que muestra el detalle de una ciudad
 const CityDetail = () => {
+    // Obtenemos el id de la URL
     const { id } = useParams();
-    const [city, setCity] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
+    // Estados para manejar la información
+    const [city, setCity] = useState(null); // Datos de la ciudad
+    const [loading, setLoading] = useState(true); // Estado de carga
+    const [error, setError] = useState(null); // Manejo de errores
+
+    // Efecto para cargar los datos de la ciudad cuando el componente se monta
     useEffect(() => {
-        const fetchCityById = async () => {
+        const loadCity = async () => {
             if (!id) return;
 
             try {
                 setLoading(true);
-                const response = await fetch(`http://localhost:8080/api/cities/${id}`);
-
-                if (!response.ok) {
-                    throw new Error('City not found');
-                }
-
-                const data = await response.json();
-                if (data && data.response) {
-                    setCity(data.response);
-                } else {
-                    throw new Error('Invalid data format received');
-                }
+                const cityData = await getCityById(id);
+                setCity(cityData);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -33,9 +30,10 @@ const CityDetail = () => {
             }
         };
 
-        fetchCityById();
+        loadCity();
     }, [id]);
 
+    // Renderizado cuando está cargando
     if (loading) {
         return (
             <MainLayout>
@@ -48,6 +46,7 @@ const CityDetail = () => {
         );
     }
 
+    // Renderizado cuando hay un error o no se encuentra la ciudad
     if (error || !city) {
         return (
             <MainLayout>
@@ -68,6 +67,7 @@ const CityDetail = () => {
         );
     }
 
+    // Renderizado principal
     return (
         <MainLayout>
             <div className="min-h-screen relative">
@@ -100,7 +100,7 @@ const CityDetail = () => {
                             </p>
                         </div>
 
-                        {/* Descripción y botón */}
+                        {/* Descripción y botón de regreso */}
                         <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 mb-8 shadow-xl">
                             <h2 className="text-3xl font-bold text-white mb-6">About {city.name}</h2>
                             <p className="text-white/90 text-xl leading-relaxed mb-8">{city.description}</p>
@@ -115,7 +115,7 @@ const CityDetail = () => {
                             </div>
                         </div>
 
-                        {/* Sección Under Construction */}
+                        {/* Sección en construcción */}
                         <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 text-center transform hover:scale-105 transition-transform duration-300 mt-8">
                             <h2 className="text-3xl font-bold text-white mb-4">Under Construction</h2>
                             <p className="text-white/90 text-xl">
@@ -129,4 +129,5 @@ const CityDetail = () => {
     );
 };
 
+// Exportamos el componente
 export default CityDetail;

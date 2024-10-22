@@ -1,29 +1,30 @@
+// Importamos las dependencias necesarias
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchCities } from '../api/citiesApi.js';
 
+// Componente de carrusel para mostrar las ciudades
 const CityCarousel = () => {
-    const [cities, setCities] = useState([]);
-    const [currentSlide, setCurrentSlide] = useState(0);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    // Estados para manejar la información
+    const [cities, setCities] = useState([]); // Lista de ciudades
+    const [currentSlide, setCurrentSlide] = useState(0); // Slide actual
+    const [loading, setLoading] = useState(true); // Estado de carga
+    const [error, setError] = useState(null); // Manejo de errores
 
+    // Efecto para cargar las ciudades cuando el componente se monta
     useEffect(() => {
         const loadCities = async () => {
             try {
                 const data = await fetchCities();
-                // Verifica si data es un array directamente
                 if (Array.isArray(data)) {
                     setCities(data);
                 } else if (data && Array.isArray(data.response)) {
-                    // Si data tiene una propiedad response que es un array
                     setCities(data.response);
                 } else {
                     throw new Error('Invalid data format');
                 }
                 setLoading(false);
             } catch (err) {
-                console.error('Error fetching cities:', err);
                 setError('Failed to load cities');
                 setLoading(false);
             }
@@ -32,6 +33,7 @@ const CityCarousel = () => {
         loadCities();
     }, []);
 
+    // Memorización de ciudades con likes aleatorios
     const citiesWithLikes = useMemo(() => {
         return (cities || []).slice(0, 12).map(city => ({
             ...city,
@@ -39,6 +41,7 @@ const CityCarousel = () => {
         }));
     }, [cities]);
 
+    // Efecto para el autoplay del carrusel
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentSlide(prevSlide => (prevSlide + 1) % Math.ceil(citiesWithLikes.length / 4));
@@ -47,14 +50,17 @@ const CityCarousel = () => {
         return () => clearInterval(timer);
     }, [citiesWithLikes.length]);
 
+    // Función para ir al siguiente slide
     const nextSlide = () => {
         setCurrentSlide(prevSlide => (prevSlide + 1) % Math.ceil(citiesWithLikes.length / 4));
     };
 
+    // Función para ir al slide anterior
     const prevSlide = () => {
         setCurrentSlide(prevSlide => (prevSlide - 1 + Math.ceil(citiesWithLikes.length / 4)) % Math.ceil(citiesWithLikes.length / 4));
     };
 
+    // Renderizado cuando está cargando
     if (loading) {
         return (
             <div className="min-h-[400px] flex items-center justify-center">
@@ -65,6 +71,7 @@ const CityCarousel = () => {
         );
     }
 
+    // Renderizado cuando hay un error
     if (error) {
         return (
             <div className="min-h-[400px] flex items-center justify-center">
@@ -73,6 +80,7 @@ const CityCarousel = () => {
         );
     }
 
+    // Renderizado cuando no hay ciudades
     if (citiesWithLikes.length === 0) {
         return (
             <div className="min-h-[400px] flex items-center justify-center">
@@ -81,14 +89,17 @@ const CityCarousel = () => {
         );
     }
 
+    // Agrupamos las ciudades en grupos de 4
     const cityGroups = [];
     for (let i = 0; i < citiesWithLikes.length; i += 4) {
         cityGroups.push(citiesWithLikes.slice(i, i + 4));
     }
 
+    // Renderizado principal del carrusel
     return (
         <div className="my-12 max-w-6xl mx-auto px-4">
             <div className="relative overflow-hidden rounded-xl">
+                {/* Contenedor del carrusel */}
                 <div
                     className="flex transition-transform duration-500 ease-in-out"
                     style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -150,7 +161,7 @@ const CityCarousel = () => {
                 </button>
             </div>
 
-            {/* Indicadores */}
+            {/* Indicadores de posición */}
             <div className="flex justify-center gap-2 mt-6">
                 {cityGroups.map((_, index) => (
                     <button
@@ -168,4 +179,5 @@ const CityCarousel = () => {
     );
 };
 
+// Exportamos el componente
 export default CityCarousel;
