@@ -31,14 +31,14 @@ const SearchBar = ({ value, onChange }) => (
 
 // Componente para mostrar cada tarjeta de ciudad
 const CityCard = ({ city }) => (
-    <div className="relative w-96 h-64 rounded-lg overflow-hidden shadow-lg">
+    <div className="relative w-96 h-64 rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
         <img
             src={city.image}
             alt={city.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-transparent to-black opacity-70"></div>
-        <div className="absolute top-0 left-0 p-4 text-white">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-70 transition-opacity duration-300 hover:opacity-90"></div>
+        <div className="absolute top-0 left-0 p-4 text-white transition-transform duration-300 hover:translate-y-1">
             <h2 className="text-3xl font-bold">{city.name}</h2>
             <p className="flex items-center text-lg">
                 <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">

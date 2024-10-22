@@ -25,7 +25,7 @@ const Home = () => {
             {/* Botón de llamada a la acción con icono y animación */}
             <Link
               to="/cities"
-              className="group bg-white text-black font-bold py-3 px-6 md:py-4 md:px-8 rounded-full text-base md:text-lg lg:text-xl hover:bg-gray-200 transition duration-300 inline-flex items-center space-x-2 md:space-x-3 animate-pulse"
+              className="group bg-gray-800 text-white font-bold py-3 px-6 md:py-4 md:px-8 rounded-full text-base md:text-lg lg:text-xl hover:bg-gray-900 transition duration-300 inline-flex items-center space-x-2 md:space-x-3 animate-pulse"
             >
               <FaCompass className="text-xl md:text-2xl group-hover:rotate-90 transition-transform duration-300" />
               <span>Discover Amazing Cities Now!</span>
