@@ -1,9 +1,9 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { cities } from '../components/cityData.js';
 import MainLayout from '../layouts/MainLayout';
+import { fetchCities } from '../api/citiesApi.js';
 
-// Componente SearchBar: Barra de búsqueda con estilo personalizado
+// Componente SearchBar - Barra de búsqueda para filtrar ciudades
 const SearchBar = ({ value, onChange }) => (
     <div className="flex items-center bg-gray-700 rounded-full p-2 max-w-md mx-auto">
         <div className="text-blue-400 mr-2">
@@ -28,47 +28,79 @@ const SearchBar = ({ value, onChange }) => (
     </div>
 );
 
-// Componente CityCard: Tarjeta para mostrar información de una ciudad
-const CityCard = ({ city }) => (
-    <div className="relative w-96 h-64 rounded-lg overflow-hidden shadow-lg">
-        <img
-            src={city.image}
-            alt={city.name}
-            className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-transparent to-black opacity-70"></div>
-        <div className="absolute top-0 left-0 p-4 text-white">
-            <h2 className="text-3xl font-bold">{city.name}</h2>
-            <p className="flex items-center text-lg">
-                <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                </svg>
-                {city.country}
-            </p>
+// Componente CityCard - Tarjeta individual de ciudad
+const CityCard = ({ city }) => {
+    console.log("Ciudad en CityCard:", city); // Para debugging
+    return (
+        <div className="relative w-96 h-64 rounded-lg overflow-hidden shadow-lg">
+            <img
+                src={city.image}
+                alt={city.name}
+                className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-transparent to-black opacity-70"></div>
+            <div className="absolute top-0 left-0 p-4 text-white">
+                <h2 className="text-3xl font-bold">{city.name}</h2>
+                <p className="flex items-center text-lg">
+                    <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                    </svg>
+                    {city.country}
+                </p>
+            </div>
+            <Link
+                to={`/cities/${city._id}`} // Cambiado para usar la ruta correcta
+                className="absolute bottom-4 left-4 bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-900 transition duration-300 text-lg"
+            >
+                View More
+            </Link>
         </div>
-        <Link
-            to={`/city/${city.name.toLowerCase()}`}
-            className="absolute bottom-4 left-4 bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-900 transition duration-300 text-lg"
-        >
-            View More
-        </Link>
-    </div>
-);
+    );
+};
 
 // Componente principal Cities
 const Cities = () => {
-    // Estado para el texto de filtrado y la visibilidad del botón de scroll
+    const [cities, setCities] = useState([]);
+    const [filteredCities, setFilteredCities] = useState([]);
     const [filterText, setFilterText] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [showScrollTop, setShowScrollTop] = useState(false);
 
-    // Filtrado de ciudades basado en el texto de búsqueda
-    const filteredCities = useMemo(() => {
-        return cities.filter(city =>
-            city.name.toLowerCase().startsWith(filterText.toLowerCase())
-        );
-    }, [filterText]);
+    // Cargar ciudades al montar el componente
+    useEffect(() => {
+        const loadCities = async () => {
+            try {
+                setLoading(true);
+                const response = await fetchCities();
+                console.log('Datos recibidos de la API:', response); // Para debugging
+                if (response && Array.isArray(response)) {
+                    setCities(response);
+                    setFilteredCities(response);
+                } else {
+                    throw new Error('Invalid data format received');
+                }
+            } catch (err) {
+                console.error('Error cargando ciudades:', err);
+                setError('Failed to load cities');
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    // Efecto para mostrar/ocultar el botón de scroll hacia arriba
+        loadCities();
+    }, []);
+
+    // Filtrar ciudades basado en el texto de búsqueda
+    useEffect(() => {
+        setFilteredCities(
+            cities.filter(city =>
+                city.name.toLowerCase().startsWith(filterText.toLowerCase())
+            )
+        );
+    }, [filterText, cities]);
+
+    // Manejar visibilidad del botón scroll to top
     useEffect(() => {
         const toggleVisibility = () => {
             if (window.pageYOffset > 300) {
@@ -79,11 +111,10 @@ const Cities = () => {
         };
 
         window.addEventListener('scroll', toggleVisibility);
-
         return () => window.removeEventListener('scroll', toggleVisibility);
     }, []);
 
-    // Función para scroll suave hacia arriba
+    // Función para volver al inicio de la página
     const scrollToTop = () => {
         window.scrollTo({
             top: 0,
@@ -91,10 +122,28 @@ const Cities = () => {
         });
     };
 
+    // Renderizado condicional para estados de carga y error
+    if (loading) return (
+        <MainLayout>
+            <div className="min-h-screen bg-slate-500 flex items-center justify-center">
+                <p className="text-white text-2xl">Loading...</p>
+            </div>
+        </MainLayout>
+    );
+
+    if (error) return (
+        <MainLayout>
+            <div className="min-h-screen bg-slate-500 flex items-center justify-center">
+                <p className="text-white text-2xl">{error}</p>
+            </div>
+        </MainLayout>
+    );
+
+    // Renderizado principal
     return (
         <MainLayout>
             <div className="min-h-screen bg-slate-500 relative">
-                {/* Sección hero con título y descripción */}
+                {/* Hero Section */}
                 <div className="hero-background-cities flex flex-col justify-center items-center">
                     <div className="text-center z-10 relative px-4">
                         <h1 className="text-5xl font-bold text-white mb-4">
@@ -106,7 +155,7 @@ const Cities = () => {
                     </div>
                 </div>
 
-                {/* Barra de búsqueda */}
+                {/* Search Section */}
                 <div className="bg-slate-500 py-6">
                     <SearchBar
                         value={filterText}
@@ -114,12 +163,12 @@ const Cities = () => {
                     />
                 </div>
 
-                {/* Lista de ciudades filtradas */}
+                {/* Cities Grid */}
                 <div className="p-8">
                     {filteredCities.length > 0 ? (
                         <div className="flex flex-wrap justify-center gap-6">
-                            {filteredCities.map((city, index) => (
-                                <CityCard key={index} city={city} />
+                            {filteredCities.map((city) => (
+                                <CityCard key={city._id} city={city} />
                             ))}
                         </div>
                     ) : (
@@ -129,7 +178,7 @@ const Cities = () => {
                     )}
                 </div>
 
-                {/* Botón de scroll hacia arriba */}
+                {/* Scroll to Top Button */}
                 {showScrollTop && (
                     <button
                         onClick={scrollToTop}

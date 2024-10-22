@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaCompass } from 'react-icons/fa';
 import CityCarousel from '../components/CityCarousel';
-import { cities } from '../components/cityData';
 import MainLayout from '../layouts/MainLayout';
 
 // Definición del componente Home
@@ -39,7 +38,7 @@ const Home = () => {
           <div className="container mx-auto px-4 py-12">
             <h2 className="text-3xl font-bold text-white mb-8 text-center">Popular Mytineraries</h2>
             {/* Componente de carrusel de ciudades */}
-            <CityCarousel cities={cities} />
+            <CityCarousel />
           </div>
         </div>
       </div>
