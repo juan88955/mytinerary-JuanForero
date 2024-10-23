@@ -144,7 +144,7 @@ const Cities = () => {
             behavior: 'smooth'
         });
     };
-
+    // Renderizado cuando está cargando
     if (loading) return (
         <MainLayout>
             <div className="min-h-screen bg-slate-500 flex items-center justify-center">
@@ -152,7 +152,7 @@ const Cities = () => {
             </div>
         </MainLayout>
     );
-
+    // Renderizado cuando hay un error
     if (error) return (
         <MainLayout>
             <div className="min-h-screen bg-slate-500 flex items-center justify-center">
@@ -161,6 +161,7 @@ const Cities = () => {
         </MainLayout>
     );
 
+    // Renderizado principal
     return (
         <MainLayout>
             <div className="min-h-screen bg-slate-500 relative">
