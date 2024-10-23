@@ -1,4 +1,3 @@
-// Importamos las dependencias necesarias
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
@@ -56,27 +55,23 @@ const CityCard = ({ city }) => (
     </div>
 );
 
-// Componente principal que muestra todas las ciudades
+// Componente principal
 const Cities = () => {
-    // Estados para manejar la información
-    const [cities, setCities] = useState([]); // Lista completa de ciudades
-    const [filteredCities, setFilteredCities] = useState([]); // Ciudades filtradas
-    const [filterText, setFilterText] = useState(''); // Texto del buscador
-    const [loading, setLoading] = useState(true); // Estado de carga
-    const [error, setError] = useState(null); // Manejo de errores
-    const [showScrollTop, setShowScrollTop] = useState(false); // Botón de scroll
+    const [cities, setCities] = useState([]);
+    const [filterText, setFilterText] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [showScrollTop, setShowScrollTop] = useState(false);
+    const [isSearching, setIsSearching] = useState(false);
 
-    // Efecto para cargar las ciudades cuando el componente se monta
+    // Efecto para cargar las ciudades iniciales
     useEffect(() => {
-        const loadCities = async () => {
+        const loadInitialCities = async () => {
             try {
                 setLoading(true);
-                const response = await fetchCities();
+                const response = await fetchCities('');
                 if (response && Array.isArray(response)) {
                     setCities(response);
-                    setFilteredCities(response);
-                } else {
-                    throw new Error('Invalid data format received');
                 }
             } catch (err) {
                 setError('Failed to load cities');
@@ -85,19 +80,51 @@ const Cities = () => {
             }
         };
 
-        loadCities();
+        loadInitialCities();
     }, []);
 
-    // Efecto para filtrar las ciudades según el texto de búsqueda
+    // Efecto para manejar la búsqueda de ciudades
     useEffect(() => {
-        setFilteredCities(
-            cities.filter(city =>
-                city.name.toLowerCase().startsWith(filterText.toLowerCase())
-            )
-        );
-    }, [filterText, cities]);
+        if (filterText === '') return;
 
-    // Efecto para mostrar/ocultar el botón de scroll
+        const searchTimer = setTimeout(async () => {
+            try {
+                setIsSearching(true);
+                const response = await fetchCities(filterText);
+                if (response && Array.isArray(response)) {
+                    setCities(response);
+                }
+            } catch (err) {
+                setError('Failed to search cities');
+            } finally {
+                setIsSearching(false);
+            }
+        }, 300);
+
+        return () => clearTimeout(searchTimer);
+    }, [filterText]);
+
+    // Manejador del cambio en la búsqueda
+    const handleSearchChange = async (e) => {
+        const value = e.target.value;
+        setFilterText(value);
+
+        if (value === '') {
+            try {
+                setIsSearching(true);
+                const response = await fetchCities('');
+                if (response && Array.isArray(response)) {
+                    setCities(response);
+                }
+            } catch (err) {
+                setError('Failed to load cities');
+            } finally {
+                setIsSearching(false);
+            }
+        }
+    };
+
+    // Efecto para el botón de scroll
     useEffect(() => {
         const toggleVisibility = () => {
             if (window.pageYOffset > 300) {
@@ -111,7 +138,6 @@ const Cities = () => {
         return () => window.removeEventListener('scroll', toggleVisibility);
     }, []);
 
-    // Función para volver al inicio de la página
     const scrollToTop = () => {
         window.scrollTo({
             top: 0,
@@ -119,7 +145,6 @@ const Cities = () => {
         });
     };
 
-    // Renderizado cuando está cargando
     if (loading) return (
         <MainLayout>
             <div className="min-h-screen bg-slate-500 flex items-center justify-center">
@@ -128,7 +153,6 @@ const Cities = () => {
         </MainLayout>
     );
 
-    // Renderizado cuando hay un error
     if (error) return (
         <MainLayout>
             <div className="min-h-screen bg-slate-500 flex items-center justify-center">
@@ -137,11 +161,9 @@ const Cities = () => {
         </MainLayout>
     );
 
-    // Renderizado principal de la página
     return (
         <MainLayout>
             <div className="min-h-screen bg-slate-500 relative">
-                {/* Sección del héroe con título */}
                 <div className="hero-background-cities flex flex-col justify-center items-center">
                     <div className="text-center z-10 relative px-4">
                         <h1 className="text-5xl font-bold text-white mb-4">
@@ -153,32 +175,37 @@ const Cities = () => {
                     </div>
                 </div>
 
-                {/* Sección de búsqueda */}
                 <div className="bg-slate-500 py-6">
                     <SearchBar
                         value={filterText}
-                        onChange={(e) => setFilterText(e.target.value)}
+                        onChange={handleSearchChange}
                     />
                 </div>
 
-                {/* Sección de resultados */}
-                <div className="p-8">
-                    {filteredCities.length > 0 ? (
-                        <div className="flex flex-wrap justify-center gap-6">
-                            {filteredCities.map((city) => (
-                                <CityCard key={city._id} city={city} />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 text-center transform hover:scale-105 transition-transform duration-300 mt-8 max-w-2xl mx-auto">
-                            <p className="text-white/90 text-2xl">
-                                No cities found matching your search. Try a different filter!
-                            </p>
+                <div className="p-8 relative">
+                    {isSearching && (
+                        <div className="absolute top-0 left-0 right-0 flex justify-center">
+                            <div className="bg-blue-500 text-white px-4 py-2 rounded-full">
+                                Searching...
+                            </div>
                         </div>
                     )}
+
+                    <div className="flex flex-wrap justify-center gap-6">
+                        {cities.length > 0 ? (
+                            cities.map((city) => (
+                                <CityCard key={city._id} city={city} />
+                            ))
+                        ) : (
+                            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 text-center mt-8 max-w-2xl mx-auto">
+                                <p className="text-white/90 text-2xl">
+                                    No cities found matching your search. Try a different filter!
+                                </p>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
-                {/* Botón para volver arriba */}
                 {showScrollTop && (
                     <button
                         onClick={scrollToTop}
@@ -195,5 +222,4 @@ const Cities = () => {
     );
 };
 
-// Exportamos el componente
 export default Cities;
