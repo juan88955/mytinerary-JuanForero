@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import MainLayout from '../layouts/MainLayout';
-import { fetchCities } from '../api/citiesApi.js';
+import { fetchCitiesAsync, setFilterText } from '../store/slices/citiesSlice';
 
 // Componente para la barra de búsqueda de ciudades
 const SearchBar = ({ value, onChange }) => (
@@ -11,6 +12,7 @@ const SearchBar = ({ value, onChange }) => (
                 <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
             </svg>
         </div>
+        {/* Entrada de texto para la búsqueda */}
         <input
             type="text"
             placeholder="Search your city"
@@ -29,129 +31,101 @@ const SearchBar = ({ value, onChange }) => (
 );
 
 // Componente para mostrar cada tarjeta de ciudad
-const CityCard = ({ city }) => (
-    <div className="relative w-96 h-64 rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
-        <img
-            src={city.image}
-            alt={city.name}
-            className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-70 transition-opacity duration-300 hover:opacity-90"></div>
-        <div className="absolute top-0 left-0 p-4 text-white transition-transform duration-300 hover:translate-y-1">
-            <h2 className="text-3xl font-bold">{city.name}</h2>
-            <p className="flex items-center text-lg">
-                <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                </svg>
-                {city.country}
-            </p>
+const CityCard = ({ city }) => {
+    if (!city || !city._id) return null;
+
+    return (
+        <div className="relative w-96 h-64 rounded-lg overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-2xl">
+            <img
+                src={city.image}
+                alt={city.name}
+                className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'https://via.placeholder.com/400x300?text=City+Image';
+                }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-70 transition-opacity duration-300 hover:opacity-90"></div>
+            <div className="absolute top-0 left-0 p-4 text-white transition-transform duration-300 hover:translate-y-1">
+                <h2 className="text-3xl font-bold">{city.name}</h2>
+                <p className="flex items-center text-lg">
+                    <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                    </svg>
+                    {city.country}
+                </p>
+            </div>
+
+            <Link
+                to={`/cities/${city._id}`}
+                className="absolute bottom-4 left-4 bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-900 transition duration-300 text-lg"
+            >
+                View More
+            </Link>
         </div>
-        <Link
-            to={`/cities/${city._id}`}
-            className="absolute bottom-4 left-4 bg-gray-800 text-white px-6 py-2 rounded-md hover:bg-gray-900 transition duration-300 text-lg"
-        >
-            View More
-        </Link>
-    </div>
-);
+    );
+};
 
 // Componente principal
 const Cities = () => {
-    const [cities, setCities] = useState([]);
-    const [filterText, setFilterText] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const dispatch = useDispatch(); // Hook para despachar acciones de Redux
+    const { cities, loading, error } = useSelector((state) => state.cities); // Selecciona el estado de las ciudades
+    const [filterText, setFilterTextLocal] = useState(''); // Estado local para el texto de búsqueda
     const [showScrollTop, setShowScrollTop] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
 
     // Efecto para cargar las ciudades iniciales
     useEffect(() => {
-        const loadInitialCities = async () => {
-            try {
-                setLoading(true);
-                const response = await fetchCities('');
-                if (response && Array.isArray(response)) {
-                    setCities(response);
-                }
-            } catch (err) {
-                setError('Failed to load cities');
-            } finally {
-                setLoading(false);
-            }
-        };
+        dispatch(fetchCitiesAsync(''));
+    }, [dispatch]);
 
-        loadInitialCities();
-    }, []);
-
-    // Efecto para manejar la búsqueda de ciudades
+    // Efecto para manejar la actualización del filtro de búsqueda
     useEffect(() => {
-        if (filterText === '') return;
-
-        const searchTimer = setTimeout(async () => {
-            try {
-                setIsSearching(true);
-                const response = await fetchCities(filterText);
-                if (response && Array.isArray(response)) {
-                    setCities(response);
-                }
-            } catch (err) {
-                setError('Failed to search cities');
-            } finally {
-                setIsSearching(false);
-            }
+        dispatch(setFilterText(filterText)); // Actualiza el filtro de texto en el store de Redux
+        setIsSearching(true);
+        const searchTimer = setTimeout(() => {
+            dispatch(fetchCitiesAsync(filterText))
+                .finally(() => setIsSearching(false));
         }, 300);
 
-        return () => clearTimeout(searchTimer);
-    }, [filterText]);
+        return () => {
+            clearTimeout(searchTimer);
+            setIsSearching(false);
+        };
+    }, [filterText, dispatch]);
 
     // Manejador del cambio en la búsqueda
-    const handleSearchChange = async (e) => {
-        const value = e.target.value;
-        setFilterText(value);
-
-        if (value === '') {
-            try {
-                setIsSearching(true);
-                const response = await fetchCities('');
-                if (response && Array.isArray(response)) {
-                    setCities(response);
-                }
-            } catch (err) {
-                setError('Failed to load cities');
-            } finally {
-                setIsSearching(false);
-            }
-        }
+    const handleSearchChange = (e) => {
+        setFilterTextLocal(e.target.value); // Actualiza el estado local del texto de búsqueda
     };
 
     // Efecto para el botón de scroll
     useEffect(() => {
         const toggleVisibility = () => {
-            if (window.pageYOffset > 300) {
-                setShowScrollTop(true);
-            } else {
-                setShowScrollTop(false);
-            }
+            setShowScrollTop(window.pageYOffset > 300);
         };
 
         window.addEventListener('scroll', toggleVisibility);
         return () => window.removeEventListener('scroll', toggleVisibility);
     }, []);
 
+    // Función para scroll hacia arriba
     const scrollToTop = () => {
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
         });
     };
+
     // Renderizado cuando está cargando
-    if (loading) return (
+    if (loading && !isSearching) return (
         <MainLayout>
             <div className="min-h-screen bg-slate-500 flex items-center justify-center">
                 <p className="text-white text-2xl">Loading...</p>
             </div>
         </MainLayout>
     );
+
     // Renderizado cuando hay un error
     if (error) return (
         <MainLayout>
@@ -185,14 +159,18 @@ const Cities = () => {
 
                 <div className="p-8 relative">
                     {isSearching && (
-                        <div className="absolute top-0 left-0 right-0 flex justify-center">
-                            <div className="bg-blue-500 text-white px-4 py-2 rounded-full">
-                                Searching...
+                        <div className="absolute top-0 left-0 right-0 flex justify-center mb-8">
+                            <div className="bg-gray-800 text-white px-6 py-2 rounded-lg shadow-lg flex items-center space-x-2 mb-6">
+                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>Searching cities...</span>
                             </div>
                         </div>
                     )}
 
-                    <div className="flex flex-wrap justify-center gap-6">
+                    <div className="flex flex-wrap justify-center gap-6 mt-8">
                         {cities.length > 0 ? (
                             cities.map((city) => (
                                 <CityCard key={city._id} city={city} />

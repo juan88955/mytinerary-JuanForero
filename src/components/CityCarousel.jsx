@@ -1,66 +1,51 @@
-// Importamos las dependencias necesarias
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { fetchCities } from '../api/citiesApi.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchCitiesAsync } from '../store/slices/citiesSlice';
 
-// Componente de carrusel para mostrar las ciudades
 const CityCarousel = () => {
-    // Estados para manejar la información
-    const [cities, setCities] = useState([]); // Lista de ciudades
-    const [currentSlide, setCurrentSlide] = useState(0); // Slide actual
-    const [loading, setLoading] = useState(true); // Estado de carga
-    const [error, setError] = useState(null); // Manejo de errores
+    // Hooks de Redux y Estado Local
+    const dispatch = useDispatch();
+    const { cities = [], loading, error } = useSelector((state) => state.cities);
+    const [currentSlide, setCurrentSlide] = useState(0);
+
+    // Configuración del carrusel
+    const citiesForDisplay = cities.slice(0, 12);
+    const totalGroups = Math.ceil(citiesForDisplay.length / 4);
 
     // Efecto para cargar las ciudades cuando el componente se monta
     useEffect(() => {
-        const loadCities = async () => {
-            try {
-                const data = await fetchCities();
-                if (Array.isArray(data)) {
-                    setCities(data);
-                } else if (data && Array.isArray(data.response)) {
-                    setCities(data.response);
-                } else {
-                    throw new Error('Invalid data format');
-                }
-                setLoading(false);
-            } catch (err) {
-                setError('Failed to load cities');
-                setLoading(false);
-            }
-        };
+        dispatch(fetchCitiesAsync());
+    }, [dispatch]);
 
-        loadCities();
-    }, []);
-
-    // Memorización de ciudades con likes aleatorios
-    const citiesWithLikes = useMemo(() => {
-        return (cities || []).slice(0, 12).map(city => ({
-            ...city,
-            likes: Math.floor(Math.random() * (2000 - 500 + 1)) + 500
-        }));
-    }, [cities]);
-
-    // Efecto para el autoplay del carrusel
+    // Si hay más de un grupo, se inicia un temporizador para cambiar de slide
     useEffect(() => {
+        if (totalGroups <= 1) return;
+
         const timer = setInterval(() => {
-            setCurrentSlide(prevSlide => (prevSlide + 1) % Math.ceil(citiesWithLikes.length / 4));
+            setCurrentSlide(prevSlide => (prevSlide + 1) % totalGroups);
         }, 5000);
 
         return () => clearInterval(timer);
-    }, [citiesWithLikes.length]);
+    }, [totalGroups]);
 
-    // Función para ir al siguiente slide
+    // Si se llega al final del carrusel, se vuelve al principio
+    useEffect(() => {
+        if (currentSlide >= totalGroups) {
+            setCurrentSlide(0);
+        }
+    }, [totalGroups, currentSlide]);
+
+    // Funciones de navegación del carrusel
     const nextSlide = () => {
-        setCurrentSlide(prevSlide => (prevSlide + 1) % Math.ceil(citiesWithLikes.length / 4));
+        setCurrentSlide(prevSlide => (prevSlide + 1) % totalGroups);
     };
 
-    // Función para ir al slide anterior
     const prevSlide = () => {
-        setCurrentSlide(prevSlide => (prevSlide - 1 + Math.ceil(citiesWithLikes.length / 4)) % Math.ceil(citiesWithLikes.length / 4));
+        setCurrentSlide(prevSlide => (prevSlide - 1 + totalGroups) % totalGroups);
     };
 
-    // Renderizado cuando está cargando
+    // Estados de carga y error
     if (loading) {
         return (
             <div className="min-h-[400px] flex items-center justify-center">
@@ -71,7 +56,6 @@ const CityCarousel = () => {
         );
     }
 
-    // Renderizado cuando hay un error
     if (error) {
         return (
             <div className="min-h-[400px] flex items-center justify-center">
@@ -80,8 +64,7 @@ const CityCarousel = () => {
         );
     }
 
-    // Renderizado cuando no hay ciudades
-    if (citiesWithLikes.length === 0) {
+    if (!cities || cities.length === 0) {
         return (
             <div className="min-h-[400px] flex items-center justify-center">
                 <div className="text-gray-600">No cities available</div>
@@ -89,95 +72,139 @@ const CityCarousel = () => {
         );
     }
 
-    // Agrupamos las ciudades en grupos de 4
+    // Preparación de grupos de ciudades para el carrusel
+    // Divide las ciudades en grupos de 4 para mostrarlas
     const cityGroups = [];
-    for (let i = 0; i < citiesWithLikes.length; i += 4) {
-        cityGroups.push(citiesWithLikes.slice(i, i + 4));
+    for (let i = 0; i < citiesForDisplay.length; i += 4) {
+        const group = citiesForDisplay.slice(i, i + 4);
+        if (group.length > 0) {
+            cityGroups.push(group);
+        }
     }
 
-    // Renderizado principal del carrusel
     return (
         <div className="my-12 max-w-6xl mx-auto px-4">
-            <div className="relative overflow-hidden rounded-xl">
-                {/* Contenedor del carrusel */}
-                <div
-                    className="flex transition-transform duration-500 ease-in-out"
-                    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-                >
-                    {cityGroups.map((group, groupIndex) => (
-                        <div key={groupIndex} className="w-full flex-shrink-0 px-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {group.map((city) => (
-                                    <Link
-                                        to={`/cities/${city._id}`}
-                                        key={city._id}
-                                        className="block transform transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
-                                    >
-                                        <div className="relative rounded-xl overflow-hidden bg-white shadow-lg group h-[300px] w-full">
-                                            <div className="h-full w-full">
-                                                <img
-                                                    src={city.image}
-                                                    alt={city.name}
-                                                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                                    onError={(e) => {
-                                                        e.target.onerror = null;
-                                                        e.target.src = 'https://via.placeholder.com/400x300?text=City+Image';
-                                                    }}
-                                                />
+            <div className="relative">
+                {/* Contenedor principal del carrusel */}
+                <div className="overflow-hidden rounded-xl relative">
+                    {/* Track del carrusel con animación de transformación */}
+                    <div
+                        className="flex transition-transform duration-500 ease-in-out"
+                        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                    >
+                        {/* Mapeo de grupos de ciudades */}
+                        {cityGroups.map((group, groupIndex) => (
+                            <div key={groupIndex} className="w-full flex-shrink-0 px-4">
+                                {/* Grid responsivo para las tarjetas de ciudades */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {/* Mapeo de ciudades individuales */}
+                                    {group.map((city) => (
+                                        <Link
+                                            to={`/cities/${city._id}`}
+                                            key={city._id}
+                                            className="block transform transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+                                        >
+                                            {/* Tarjeta de ciudad individual */}
+                                            <div className="relative rounded-xl overflow-hidden bg-white shadow-lg group h-[300px] w-full">
+                                                {/* Contenedor de imagen */}
+                                                <div className="h-full w-full">
+                                                    <img
+                                                        src={city.image}
+                                                        alt={city.name}
+                                                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                                        onError={(e) => {
+                                                            e.target.onerror = null;
+                                                            e.target.src = 'https://via.placeholder.com/400x300?text=City+Image';
+                                                        }}
+                                                    />
+                                                </div>
+                                                {/* Overlay gradiente */}
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent"></div>
+                                                {/* Información de la ciudad */}
+                                                <div className="absolute bottom-0 left-0 right-0 p-4">
+                                                    <h3 className="text-xl font-bold text-white mb-1">{city.name}</h3>
+                                                    <p className="text-sm text-white/90">{city.country}</p>
+                                                </div>
+                                                {/* Ícono de corazón */}
+                                                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                                                    </svg>
+                                                </div>
                                             </div>
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent"></div>
-                                            <div className="absolute bottom-0 left-0 right-0 p-4">
-                                                <h3 className="text-xl font-bold text-white mb-1">{city.name}</h3>
-                                                <p className="text-sm text-white/90">{city.country}</p>
-                                            </div>
-                                            <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1 shadow-lg">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-                                                </svg>
-                                                <span className="text-sm font-bold text-gray-800">{city.likes.toLocaleString()}</span>
-                                            </div>
-                                        </div>
-                                    </Link>
-                                ))}
+                                        </Link>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
+
+                    {/* Botones de navegación */}
+                    {totalGroups > 1 && (
+                        <>
+                            {/* Botón anterior */}
+                            <button
+                                onClick={prevSlide}
+                                className="absolute top-1/2 left-4 -translate-y-1/2 bg-gray-800/30 hover:bg-gray-800/50 text-white rounded-full w-10 h-10 flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+                                aria-label="Previous slide"
+                            >
+                                <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M15 19l-7-7 7-7"
+                                    />
+                                </svg>
+                            </button>
+                            {/* Botón siguiente */}
+                            <button
+                                onClick={nextSlide}
+                                className="absolute top-1/2 right-4 -translate-y-1/2 bg-gray-800/30 hover:bg-gray-800/50 text-white rounded-full w-10 h-10 flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+                                aria-label="Next slide"
+                            >
+                                <svg
+                                    className="w-5 h-5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M9 5l7 7-7 7"
+                                    />
+                                </svg>
+                            </button>
+                        </>
+                    )}
                 </div>
 
-                {/* Botones de navegación */}
-                <button
-                    onClick={prevSlide}
-                    className="absolute top-1/2 left-4 -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
-                    aria-label="Previous slide"
-                >
-                    ←
-                </button>
-                <button
-                    onClick={nextSlide}
-                    className="absolute top-1/2 right-4 -translate-y-1/2 bg-white/80 hover:bg-white backdrop-blur-sm text-gray-800 rounded-full w-10 h-10 flex items-center justify-center shadow-lg transition-all duration-300 hover:scale-110"
-                    aria-label="Next slide"
-                >
-                    →
-                </button>
-            </div>
-
-            {/* Indicadores de posición */}
-            <div className="flex justify-center gap-2 mt-6">
-                {cityGroups.map((_, index) => (
-                    <button
-                        key={index}
-                        onClick={() => setCurrentSlide(index)}
-                        className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${currentSlide === index
-                            ? 'bg-gray-800 w-6'
-                            : 'bg-gray-300 hover:bg-gray-400'
-                            }`}
-                        aria-label={`Go to slide ${index + 1}`}
-                    />
-                ))}
+                {/* Indicadores de slide */}
+                {totalGroups > 1 && (
+                    <div className="flex justify-center gap-2 mt-6">
+                        {cityGroups.map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => setCurrentSlide(index)}
+                                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${currentSlide === index
+                                        ? 'bg-gray-800 w-6'
+                                        : 'bg-gray-300 hover:bg-gray-400'
+                                    }`}
+                                aria-label={`Go to slide ${index + 1}`}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );
 };
 
-// Exportamos el componente
 export default CityCarousel;

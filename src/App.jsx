@@ -1,30 +1,20 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-
-// Importamos las páginas de nuestra aplicación
-import Home from './pages/Home';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Cities from './pages/Cities';
-import CityDetail from './pages/CityDetail';
+import CityDetail from './components/CityDetail';
+import Home from './pages/Home';
 
-// Componente principal que maneja el enrutamiento de la aplicación
+// Función principal de la aplicación
 function App() {
   return (
-    // Router principal que envuelve toda la aplicación
     <Router>
-      {/* Definición de rutas disponibles */}
       <Routes>
-        {/* Ruta para la página principal */}
-        <Route path="/" element={<Home />} />
-
-        {/* Ruta para el listado de ciudades */}
-        <Route path="/cities" element={<Cities />} />
-
-        {/* Ruta para el detalle de una ciudad específica */}
-        <Route path="/cities/:id" element={<CityDetail />} />
+        {/* Definición de las rutas de la aplicación */}
+        <Route path="/" element={<Home />} /> {/* Ruta para la página de inicio */}
+        <Route path="/cities" element={<Cities />} /> {/* Ruta para la página de ciudades */}
+        <Route path="/cities/:id" element={<CityDetail />} /> {/* Ruta para el detalle de una ciudad específica por ID */}
       </Routes>
     </Router>
   );
 }
 
-// Exportamos el componente App
 export default App;
