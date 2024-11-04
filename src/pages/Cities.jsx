@@ -12,7 +12,6 @@ const SearchBar = ({ value, onChange }) => (
                 <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
             </svg>
         </div>
-        {/* Entrada de texto para la búsqueda */}
         <input
             type="text"
             placeholder="Search your city"
@@ -68,9 +67,8 @@ const CityCard = ({ city }) => {
 
 // Componente principal
 const Cities = () => {
-    const dispatch = useDispatch(); // Hook para despachar acciones de Redux
-    const { cities, loading, error } = useSelector((state) => state.cities); // Selecciona el estado de las ciudades
-    const [filterText, setFilterTextLocal] = useState(''); // Estado local para el texto de búsqueda
+    const dispatch = useDispatch();
+    const { cities, loading, error, filterText } = useSelector((state) => state.cities);
     const [showScrollTop, setShowScrollTop] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
 
@@ -81,12 +79,11 @@ const Cities = () => {
 
     // Efecto para manejar la actualización del filtro de búsqueda
     useEffect(() => {
-        dispatch(setFilterText(filterText)); // Actualiza el filtro de texto en el store de Redux
         setIsSearching(true);
         const searchTimer = setTimeout(() => {
             dispatch(fetchCitiesAsync(filterText))
                 .finally(() => setIsSearching(false));
-        }, 300);
+        }, 100);
 
         return () => {
             clearTimeout(searchTimer);
@@ -96,7 +93,7 @@ const Cities = () => {
 
     // Manejador del cambio en la búsqueda
     const handleSearchChange = (e) => {
-        setFilterTextLocal(e.target.value); // Actualiza el estado local del texto de búsqueda
+        dispatch(setFilterText(e.target.value));
     };
 
     // Efecto para el botón de scroll
@@ -117,7 +114,6 @@ const Cities = () => {
         });
     };
 
-    // Renderizado cuando está cargando
     if (loading && !isSearching) return (
         <MainLayout>
             <div className="min-h-screen bg-slate-500 flex items-center justify-center">
@@ -126,7 +122,6 @@ const Cities = () => {
         </MainLayout>
     );
 
-    // Renderizado cuando hay un error
     if (error) return (
         <MainLayout>
             <div className="min-h-screen bg-slate-500 flex items-center justify-center">
@@ -135,7 +130,6 @@ const Cities = () => {
         </MainLayout>
     );
 
-    // Renderizado principal
     return (
         <MainLayout>
             <div className="min-h-screen bg-slate-500 relative">
