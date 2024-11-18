@@ -40,6 +40,24 @@ const ItineraryCard = ({ itinerary }) => {
 
     return (
         <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-6 shadow-xl">
+            {/* Imagen y título del itinerario */}
+            <div className="mb-6 relative group transition-all duration-300">
+                <img
+                    src={itinerary.image}
+                    alt={itinerary.title}
+                    className="w-full h-48 md:h-64 lg:h-80 object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
+                    onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://via.placeholder.com/400x300?text=Image+Not+Available';
+                    }}
+                />
+                <div className="absolute bottom-0 w-full bg-black/50 p-4 rounded-b-lg">
+                    <h3 className="text-xl font-bold text-white text-center">
+                        {itinerary.title}
+                    </h3>
+                </div>
+            </div>
+
             {/* Perfil del autor */}
             <div className="flex flex-col items-center mb-6">
                 <div className="relative w-16 h-16 mb-2">
@@ -96,7 +114,8 @@ const ItineraryCard = ({ itinerary }) => {
                     </p>
                 </div>
             </div>
-            {/* Mostrar hashtags con animación */}
+
+            {/* Hashtags */}
             <div className="flex flex-wrap gap-2 mb-6 justify-center">
                 {itinerary.hashtags && itinerary.hashtags.map((tag, index) => (
                     <span
