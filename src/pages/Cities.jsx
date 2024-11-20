@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import MainLayout from '../layouts/MainLayout';
 import { fetchCitiesAsync, setFilterText } from '../store/slices/citiesSlice';
 
-// Componente para la barra de búsqueda de ciudades
 const SearchBar = ({ value, onChange }) => (
     <div className="flex items-center bg-gray-700 rounded-full p-2 max-w-md mx-auto">
         <div className="text-blue-400 mr-2">
@@ -29,7 +27,6 @@ const SearchBar = ({ value, onChange }) => (
     </div>
 );
 
-// Componente para mostrar cada tarjeta de ciudad
 const CityCard = ({ city }) => {
     if (!city || !city._id) return null;
 
@@ -65,19 +62,16 @@ const CityCard = ({ city }) => {
     );
 };
 
-// Componente principal
 const Cities = () => {
     const dispatch = useDispatch();
     const { cities, loading, error, filterText } = useSelector((state) => state.cities);
     const [showScrollTop, setShowScrollTop] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
 
-    // Efecto para cargar las ciudades iniciales
     useEffect(() => {
         dispatch(fetchCitiesAsync(''));
     }, [dispatch]);
 
-    // Efecto para manejar la actualización del filtro de búsqueda
     useEffect(() => {
         setIsSearching(true);
         const searchTimer = setTimeout(() => {
@@ -91,12 +85,10 @@ const Cities = () => {
         };
     }, [filterText, dispatch]);
 
-    // Manejador del cambio en la búsqueda
     const handleSearchChange = (e) => {
         dispatch(setFilterText(e.target.value));
     };
 
-    // Efecto para el botón de scroll
     useEffect(() => {
         const toggleVisibility = () => {
             setShowScrollTop(window.pageYOffset > 300);
@@ -106,7 +98,6 @@ const Cities = () => {
         return () => window.removeEventListener('scroll', toggleVisibility);
     }, []);
 
-    // Función para scroll hacia arriba
     const scrollToTop = () => {
         window.scrollTo({
             top: 0,
@@ -115,83 +106,77 @@ const Cities = () => {
     };
 
     if (loading && !isSearching) return (
-        <MainLayout>
-            <div className="min-h-screen bg-slate-500 flex items-center justify-center">
-                <p className="text-white text-2xl">Loading...</p>
-            </div>
-        </MainLayout>
+        <div className="min-h-screen bg-slate-500 flex items-center justify-center">
+            <p className="text-white text-2xl">Loading...</p>
+        </div>
     );
 
     if (error) return (
-        <MainLayout>
-            <div className="min-h-screen bg-slate-500 flex items-center justify-center">
-                <p className="text-white text-2xl">{error}</p>
-            </div>
-        </MainLayout>
+        <div className="min-h-screen bg-slate-500 flex items-center justify-center">
+            <p className="text-white text-2xl">{error}</p>
+        </div>
     );
 
     return (
-        <MainLayout>
-            <div className="min-h-screen bg-slate-500 relative">
-                <div className="hero-background-cities flex flex-col justify-center items-center">
-                    <div className="text-center z-10 relative px-4">
-                        <h1 className="text-5xl font-bold text-white mb-4">
-                            Cities of the World
-                        </h1>
-                        <p className="text-xl text-gray-200 max-w-2xl mx-auto">
-                            Explore iconic destinations and hidden gems across the globe. Discover the unique charm and culture of cities that shape our world.
-                        </p>
+        <div className="min-h-screen bg-slate-500 relative">
+            <div className="hero-background-cities flex flex-col justify-center items-center">
+                <div className="text-center z-10 relative px-4">
+                    <h1 className="text-5xl font-bold text-white mb-4">
+                        Cities of the World
+                    </h1>
+                    <p className="text-xl text-gray-200 max-w-2xl mx-auto">
+                        Explore iconic destinations and hidden gems across the globe. Discover the unique charm and culture of cities that shape our world.
+                    </p>
+                </div>
+            </div>
+
+            <div className="bg-slate-500 py-6">
+                <SearchBar
+                    value={filterText}
+                    onChange={handleSearchChange}
+                />
+            </div>
+
+            <div className="p-8 relative">
+                {isSearching && (
+                    <div className="absolute top-0 left-0 right-0 flex justify-center mb-8">
+                        <div className="bg-gray-800 text-white px-6 py-2 rounded-lg shadow-lg flex items-center space-x-2 mb-6">
+                            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span>Searching cities...</span>
+                        </div>
                     </div>
-                </div>
+                )}
 
-                <div className="bg-slate-500 py-6">
-                    <SearchBar
-                        value={filterText}
-                        onChange={handleSearchChange}
-                    />
-                </div>
-
-                <div className="p-8 relative">
-                    {isSearching && (
-                        <div className="absolute top-0 left-0 right-0 flex justify-center mb-8">
-                            <div className="bg-gray-800 text-white px-6 py-2 rounded-lg shadow-lg flex items-center space-x-2 mb-6">
-                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                <span>Searching cities...</span>
-                            </div>
+                <div className="flex flex-wrap justify-center gap-6 mt-8">
+                    {cities.length > 0 ? (
+                        cities.map((city) => (
+                            <CityCard key={city._id} city={city} />
+                        ))
+                    ) : (
+                        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 text-center mt-8 max-w-2xl mx-auto">
+                            <p className="text-white/90 text-2xl">
+                                No cities found matching your search. Try a different filter!
+                            </p>
                         </div>
                     )}
-
-                    <div className="flex flex-wrap justify-center gap-6 mt-8">
-                        {cities.length > 0 ? (
-                            cities.map((city) => (
-                                <CityCard key={city._id} city={city} />
-                            ))
-                        ) : (
-                            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 text-center mt-8 max-w-2xl mx-auto">
-                                <p className="text-white/90 text-2xl">
-                                    No cities found matching your search. Try a different filter!
-                                </p>
-                            </div>
-                        )}
-                    </div>
                 </div>
-
-                {showScrollTop && (
-                    <button
-                        onClick={scrollToTop}
-                        className="fixed bottom-8 right-8 bg-gray-700 text-white p-2 rounded-full shadow-lg hover:bg-gray-800 transition-colors duration-300"
-                        aria-label="Scroll to top"
-                    >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                        </svg>
-                    </button>
-                )}
             </div>
-        </MainLayout>
+
+            {showScrollTop && (
+                <button
+                    onClick={scrollToTop}
+                    className="fixed bottom-8 right-8 bg-gray-700 text-white p-2 rounded-full shadow-lg hover:bg-gray-800 transition-colors duration-300"
+                    aria-label="Scroll to top"
+                >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                </button>
+            )}
+        </div>
     );
 };
 

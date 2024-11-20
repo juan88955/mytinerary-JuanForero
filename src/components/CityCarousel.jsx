@@ -4,21 +4,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchCitiesAsync } from '../store/slices/citiesSlice';
 
 const CityCarousel = () => {
-    // Hooks de Redux y Estado Local
     const dispatch = useDispatch();
     const { cities = [], loading, error } = useSelector((state) => state.cities);
     const [currentSlide, setCurrentSlide] = useState(0);
 
-    // Configuración del carrusel
     const citiesForDisplay = cities.slice(0, 12);
     const totalGroups = Math.ceil(citiesForDisplay.length / 4);
 
-    // Efecto para cargar las ciudades cuando el componente se monta
     useEffect(() => {
         dispatch(fetchCitiesAsync());
     }, [dispatch]);
 
-    // Si hay más de un grupo, se inicia un temporizador para cambiar de slide
     useEffect(() => {
         if (totalGroups <= 1) return;
 
@@ -29,14 +25,12 @@ const CityCarousel = () => {
         return () => clearInterval(timer);
     }, [totalGroups]);
 
-    // Si se llega al final del carrusel, se vuelve al principio
     useEffect(() => {
         if (currentSlide >= totalGroups) {
             setCurrentSlide(0);
         }
     }, [totalGroups, currentSlide]);
 
-    // Funciones de navegación del carrusel
     const nextSlide = () => {
         setCurrentSlide(prevSlide => (prevSlide + 1) % totalGroups);
     };
@@ -45,7 +39,6 @@ const CityCarousel = () => {
         setCurrentSlide(prevSlide => (prevSlide - 1 + totalGroups) % totalGroups);
     };
 
-    // Estados de carga y error
     if (loading) {
         return (
             <div className="min-h-[400px] flex items-center justify-center">
@@ -72,8 +65,6 @@ const CityCarousel = () => {
         );
     }
 
-    // Preparación de grupos de ciudades para el carrusel
-    // Divide las ciudades en grupos de 4 para mostrarlas
     const cityGroups = [];
     for (let i = 0; i < citiesForDisplay.length; i += 4) {
         const group = citiesForDisplay.slice(i, i + 4);
@@ -85,28 +76,21 @@ const CityCarousel = () => {
     return (
         <div className="my-12 max-w-6xl mx-auto px-4">
             <div className="relative">
-                {/* Contenedor principal del carrusel */}
                 <div className="overflow-hidden rounded-xl relative">
-                    {/* Track del carrusel con animación de transformación */}
                     <div
                         className="flex transition-transform duration-500 ease-in-out"
                         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
                     >
-                        {/* Mapeo de grupos de ciudades */}
                         {cityGroups.map((group, groupIndex) => (
                             <div key={groupIndex} className="w-full flex-shrink-0 px-4">
-                                {/* Grid responsivo para las tarjetas de ciudades */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {/* Mapeo de ciudades individuales */}
                                     {group.map((city) => (
                                         <Link
                                             to={`/cities/${city._id}`}
                                             key={city._id}
                                             className="block transform transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
                                         >
-                                            {/* Tarjeta de ciudad individual */}
                                             <div className="relative rounded-xl overflow-hidden bg-white shadow-lg group h-[300px] w-full">
-                                                {/* Contenedor de imagen */}
                                                 <div className="h-full w-full">
                                                     <img
                                                         src={city.image}
@@ -118,14 +102,11 @@ const CityCarousel = () => {
                                                         }}
                                                     />
                                                 </div>
-                                                {/* Overlay gradiente */}
                                                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent"></div>
-                                                {/* Información de la ciudad */}
                                                 <div className="absolute bottom-0 left-0 right-0 p-4">
                                                     <h3 className="text-xl font-bold text-white mb-1">{city.name}</h3>
                                                     <p className="text-sm text-white/90">{city.country}</p>
                                                 </div>
-                                                {/* Ícono de corazón */}
                                                 <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg">
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
                                                         <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
@@ -139,10 +120,8 @@ const CityCarousel = () => {
                         ))}
                     </div>
 
-                    {/* Botones de navegación */}
                     {totalGroups > 1 && (
                         <>
-                            {/* Botón anterior */}
                             <button
                                 onClick={prevSlide}
                                 className="absolute top-1/2 left-4 -translate-y-1/2 bg-gray-800/30 hover:bg-gray-800/50 text-white rounded-full w-10 h-10 flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
@@ -162,7 +141,6 @@ const CityCarousel = () => {
                                     />
                                 </svg>
                             </button>
-                            {/* Botón siguiente */}
                             <button
                                 onClick={nextSlide}
                                 className="absolute top-1/2 right-4 -translate-y-1/2 bg-gray-800/30 hover:bg-gray-800/50 text-white rounded-full w-10 h-10 flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
@@ -186,7 +164,6 @@ const CityCarousel = () => {
                     )}
                 </div>
 
-                {/* Indicadores de slide */}
                 {totalGroups > 1 && (
                     <div className="flex justify-center gap-2 mt-6">
                         {cityGroups.map((_, index) => (
@@ -194,8 +171,8 @@ const CityCarousel = () => {
                                 key={index}
                                 onClick={() => setCurrentSlide(index)}
                                 className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${currentSlide === index
-                                        ? 'bg-gray-800 w-6'
-                                        : 'bg-gray-300 hover:bg-gray-400'
+                                    ? 'bg-gray-800 w-6'
+                                    : 'bg-gray-300 hover:bg-gray-400'
                                     }`}
                                 aria-label={`Go to slide ${index + 1}`}
                             />

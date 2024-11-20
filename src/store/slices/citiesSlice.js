@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 const BASE_URL = 'http://localhost:8080/api';
 
-// Thunk para fetchCities
 export const fetchCitiesAsync = createAsyncThunk(
     'cities/fetchCities',
     async (searchTerm = '') => {
@@ -22,7 +21,6 @@ export const fetchCitiesAsync = createAsyncThunk(
     }
 );
 
-// Thunk para getCityById
 export const getCityByIdAsync = createAsyncThunk(
     'cities/getCityById',
     async (id) => {
@@ -40,7 +38,6 @@ export const getCityByIdAsync = createAsyncThunk(
     }
 );
 
-// Thunk para obtener itinerarios por ciudad
 export const getItinerariesByCityAsync = createAsyncThunk(
     'cities/getItinerariesByCity',
     async (cityId) => {
@@ -55,7 +52,6 @@ export const getItinerariesByCityAsync = createAsyncThunk(
     }
 );
 
-// Definición del slice para gestionar el estado de las ciudades
 const citiesSlice = createSlice({
     name: 'cities',
     initialState: {
@@ -73,7 +69,6 @@ const citiesSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // Casos para fetchCities
             .addCase(fetchCitiesAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -86,7 +81,6 @@ const citiesSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
             })
-            // Casos para getCityById
             .addCase(getCityByIdAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -99,7 +93,6 @@ const citiesSlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
             })
-            // Casos para getItinerariesByCity
             .addCase(getItinerariesByCityAsync.pending, (state) => {
                 state.loading = true;
                 state.error = null;

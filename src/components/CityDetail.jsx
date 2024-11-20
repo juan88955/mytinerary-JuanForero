@@ -3,9 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCityByIdAsync } from '../store/slices/citiesSlice';
 import { getItinerariesByCityIdAsync, clearCityDetail } from '../store/slices/cityDetailSlice';
-import MainLayout from '../layouts/MainLayout';
 
-// Componente para mostrar el precio con iconos de dinero
 const PriceDisplay = ({ price }) => (
     <div className="flex gap-1">
         {[...Array(5)].map((_, index) => (
@@ -21,7 +19,6 @@ const PriceDisplay = ({ price }) => (
         ))}
     </div>
 );
-// Componente para el itinerario
 const ItineraryCard = ({ itinerary }) => {
     const [showActivities, setShowActivities] = useState(false);
 
@@ -40,7 +37,6 @@ const ItineraryCard = ({ itinerary }) => {
 
     return (
         <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 mb-6 shadow-xl">
-            {/* Imagen y título del itinerario */}
             <div className="mb-6 relative group transition-all duration-300">
                 <img
                     src={itinerary.image}
@@ -58,7 +54,6 @@ const ItineraryCard = ({ itinerary }) => {
                 </div>
             </div>
 
-            {/* Perfil del autor */}
             <div className="flex flex-col items-center mb-6">
                 <div className="relative w-16 h-16 mb-2">
                     <img
@@ -79,7 +74,6 @@ const ItineraryCard = ({ itinerary }) => {
                 </div>
             </div>
 
-            {/* Información de precio, duración y likes */}
             <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="text-white flex flex-col items-center">
                     <div className="font-semibold mb-2">Price</div>
@@ -115,7 +109,6 @@ const ItineraryCard = ({ itinerary }) => {
                 </div>
             </div>
 
-            {/* Hashtags */}
             <div className="flex flex-wrap gap-2 mb-6 justify-center">
                 {itinerary.hashtags && itinerary.hashtags.map((tag, index) => (
                     <span
@@ -127,7 +120,6 @@ const ItineraryCard = ({ itinerary }) => {
                 ))}
             </div>
 
-            {/* Botón de ver más */}
             <button
                 onClick={() => setShowActivities(!showActivities)}
                 className="bg-[#1B2C41] text-white px-6 py-2.5 rounded-md hover:bg-[#243751] transition-all duration-300 w-full flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
@@ -143,7 +135,6 @@ const ItineraryCard = ({ itinerary }) => {
                 </svg>
             </button>
 
-            {/* Contenido de actividades */}
             {showActivities && (
                 <div className="mt-4 p-6 bg-gray-800/50 rounded-lg text-center">
                     <h4 className="text-xl font-bold text-white mb-2">Under Construction</h4>
@@ -157,34 +148,31 @@ const ItineraryCard = ({ itinerary }) => {
 };
 
 const CityDetail = () => {
-    const { id } = useParams(); // Obtener el parámetro 'id' de la URL
-    const dispatch = useDispatch(); // Hook para despachar acciones de Redux
-    // Seleccionar el estado actual de la ciudad e itinerarios
+    const { id } = useParams();
+    const dispatch = useDispatch();
     const { currentCity: city, loading: cityLoading, error: cityError } = useSelector((state) => state.cities);
     const { currentItineraries: itineraries, loading: itinerariesLoading, error: itinerariesError } = useSelector((state) => state.cityDetail);
-    const [showScrollButton, setShowScrollButton] = useState(false); // Estado para mostrar el botón de desplazamiento
-
+    const [showScrollButton, setShowScrollButton] = useState(false);
     useEffect(() => {
         if (id) {
-            dispatch(getCityByIdAsync(id)); // Obtener ciudad por ID
-            dispatch(getItinerariesByCityIdAsync(id)); // Obtener itinerarios de la ciudad por ID
+            dispatch(getCityByIdAsync(id));
+            dispatch(getItinerariesByCityIdAsync(id));
         }
         return () => {
-            dispatch(clearCityDetail()); // Limpiar detalles de la ciudad al desmontar el componente
+            dispatch(clearCityDetail());
         };
     }, [id, dispatch]);
 
     useEffect(() => {
         const handleScroll = () => {
-            const show = window.scrollY > 200; // Mostrar el botón de desplazamiento si es mayor a 200px
+            const show = window.scrollY > 200;
             setShowScrollButton(show);
         };
 
         window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll); // Eliminar evento de scroll al desmontar
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Función para desplazarse suavemente hacia la parte superior de la página
     const scrollToTop = () => {
         window.scrollTo({
             top: 0,
@@ -192,45 +180,34 @@ const CityDetail = () => {
         });
     };
 
-    // Verificar si hay carga o error en los datos
     const loading = cityLoading || itinerariesLoading;
     const error = cityError || itinerariesError;
 
     if (loading) {
         return (
-            <MainLayout>
-                <div className="min-h-screen bg-slate-500 flex items-center justify-center">
-                    <div className="animate-pulse text-white text-3xl font-semibold">
-                        Exploring {city?.name || 'city'}...
-                    </div>
-                </div>
-            </MainLayout>
+            <div className="min-h-screen bg-slate-500 flex items-center justify-center">
+                <div className="animate-pulse text-white text-3xl font-semibold">Exploring {city?.name || 'city'}...</div>
+            </div>
         );
     }
 
     if (error || !city) {
         return (
-            <MainLayout>
-                <div className="min-h-screen bg-slate-500 flex items-center justify-center">
-                    <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center transform hover:scale-105 transition-transform duration-300">
-                        <h1 className="text-3xl font-bold mb-4 text-gray-800">City not found</h1>
-                        <p className="text-gray-600 mb-6">Sorry, we couldn't find the city you're looking for.</p>
-                        <Link
-                            to="/cities"
-                            className="bg-[#1B2C41] text-white px-6 py-2 rounded-md hover:bg-[#243751] transition-all duration-300 inline-flex items-center group"
-                        >
-                            <span className="transform group-hover:-translate-x-1 transition-transform duration-300">←</span>
-                            <span className="ml-2">Back to Cities</span>
-                        </Link>
-                    </div>
+            <div className="min-h-screen bg-slate-500 flex items-center justify-center">
+                <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center transform hover:scale-105 transition-transform duration-300">
+                    <h1 className="text-3xl font-bold mb-4 text-gray-800">City not found</h1>
+                    <p className="text-gray-600 mb-6">Sorry, we couldn't find the city you're looking for.</p>
+                    <Link to="/cities" className="bg-[#1B2C41] text-white px-6 py-2 rounded-md hover:bg-[#243751] transition-all duration-300 inline-flex items-center group">
+                        <span className="transform group-hover:-translate-x-1 transition-transform duration-300">←</span>
+                        <span className="ml-2">Back to Cities</span>
+                    </Link>
                 </div>
-            </MainLayout>
+            </div>
         );
     }
 
     return (
-        <MainLayout>
-            {/* Mostrar el botón de desplazamiento si está habilitado */}
+        <div>
             {showScrollButton && (
                 <button
                     onClick={scrollToTop}
@@ -278,7 +255,6 @@ const CityDetail = () => {
                                 {city.country}
                             </p>
 
-                            {/* Enlace para volver a la lista de ciudades */}
                             <div className="flex justify-center">
                                 <Link
                                     to="/cities"
@@ -349,7 +325,7 @@ const CityDetail = () => {
                     </div>
                 </div>
             </div>
-        </MainLayout>
+        </div>
     );
 };
 
