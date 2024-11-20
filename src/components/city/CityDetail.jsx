@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCityByIdAsync } from '../store/slices/citiesSlice';
-import { getItinerariesByCityIdAsync, clearCityDetail } from '../store/slices/cityDetailSlice';
+import { getCityByIdAsync } from '../../store/slices/citiesSlice';
+import { getItinerariesByCityIdAsync, clearCityDetail } from '../../store/slices/cityDetailSlice';
 
 const PriceDisplay = ({ price }) => (
     <div className="flex gap-1">

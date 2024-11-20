@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { signOut, selectAuthError, selectAuthLoading, selectAuthSuccess } from '../store/slices/authSlice';
+import { signOut, selectAuthError, selectAuthLoading, selectAuthSuccess } from '../../store/slices/authSlice';
 
 const SignOut = () => {
   const dispatch = useDispatch();

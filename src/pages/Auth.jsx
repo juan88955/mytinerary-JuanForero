@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import SignIn from '../components/SignIn';
-import SignUp from '../components/SignUp';
+import SignIn from '../components/auth/SignIn';
+import SignUp from '../components/auth/SignUp';
 
 const Auth = () => {
     const { action } = useParams();

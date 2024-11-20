@@ -1,15 +1,15 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import SignIn from './components/SignIn';
-import SignUp from './components/SignUp';
-import Dashboard from './components/Dashboard';
+import SignIn from './components/auth/SignIn';
+import SignUp from './components/auth/SignUp';
+import Dashboard from './components/layout/Dashboard';
 import Home from './pages/Home';
 import Cities from './pages/Cities';
-import CityDetail from './components/CityDetail';
-import Header from './components/Header';
+import CityDetail from './components/city/CityDetail';
+import Header from './components/layout/Header';
 import MainLayout from './layouts/MainLayout';
-import GoogleCallback from './components/GoogleCallback';
+import GoogleCallback from './components/auth/GoogleCallback';
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useSelector(state => state.auth);

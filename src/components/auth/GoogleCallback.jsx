@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { processGoogleResponse } from '../store/slices/authSlice';
+import { processGoogleResponse } from '../../store/slices/authSlice';
 
 const GoogleCallback = () => {
     const navigate = useNavigate();

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaCompass } from 'react-icons/fa';
-import CityCarousel from '../components/CityCarousel';
+import CityCarousel from '../components/city/CityCarousel';
 
 // Definición del componente Home
 const Home = () => {

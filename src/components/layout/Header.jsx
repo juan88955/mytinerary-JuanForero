@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaBars, FaUser, FaSignOutAlt } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
-import { signOut, selectIsAuthenticated, selectUser, selectAuthLoading } from '../store/slices/authSlice';
+import { signOut, selectIsAuthenticated, selectUser, selectAuthLoading } from '../../store/slices/authSlice';
 import logo from '/logo.png';
 
 const Header = () => {

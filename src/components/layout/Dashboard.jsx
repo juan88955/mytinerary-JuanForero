@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { selectIsAuthenticated, selectUser, signOut } from '../store/slices/authSlice.js';
+import { selectIsAuthenticated, selectUser, signOut } from '../../store/slices/authSlice.js';
 import { FaHeart, FaComment, FaRoute, FaMapMarkerAlt, FaSignOutAlt } from 'react-icons/fa';
 
 const Dashboard = () => {
