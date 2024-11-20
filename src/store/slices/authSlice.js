@@ -46,7 +46,16 @@ const authAPI = {
   },
 
   signOut: async () => {
-    return new Promise(resolve => setTimeout(resolve, 500));
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${BASE_URL}/auth/signout`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!response.ok) throw new Error('Logout failed');
+    return await response.json();
   }
 };
 

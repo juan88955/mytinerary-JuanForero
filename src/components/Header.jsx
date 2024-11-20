@@ -9,10 +9,10 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const user = useSelector(selectUser);
   const loading = useSelector(selectAuthLoading);
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,7 +24,7 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      await dispatch(signOut());
+      const result = await dispatch(signOut()).unwrap();
       navigate('/signin');
     } catch (error) {
       console.error('Error during logout:', error);
